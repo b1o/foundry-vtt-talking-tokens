@@ -16,7 +16,7 @@ const SHIPPED_IDS = Object.freeze(["classic", "dots", "thought", "shout", "whisp
 
 export const FALLBACK_BUBBLE_ID = "classic";
 
-export const shippedBubblePath = (id) => `modules/${MODULE_ID}/assets/bubbles/${id}.svg`;
+const shippedBubblePath = (id) => `modules/${MODULE_ID}/assets/bubbles/${id}.svg`;
 
 export const FALLBACK_BUBBLE_PATH = shippedBubblePath(FALLBACK_BUBBLE_ID);
 

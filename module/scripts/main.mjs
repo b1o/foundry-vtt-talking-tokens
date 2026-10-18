@@ -18,7 +18,7 @@ import { IndicatorStyle } from "./tokens/indicator-style.mjs";
 import { PlacementMode } from "./tokens/placement-mode.mjs";
 import { addSpeakerButton } from "./tokens/speaker-hud-button.mjs";
 import { registerSpeakerHotkey } from "./tokens/speaker-hotkey.mjs";
-import { findSceneSpeakerTokenNames, hasBubbleChange, hasModuleFlagChange } from "./tokens/token-flags.mjs";
+import { findSceneSpeakerTokenNames, hasBubbleChange, hasSpeakerMarkChange } from "./tokens/token-flags.mjs";
 import { TokenIndicators } from "./tokens/token-indicators.mjs";
 import { addControlButton, showStatusOnControlButton } from "./ui/control-button.mjs";
 import { ControlPanel } from "./ui/control-panel.mjs";
@@ -202,7 +202,7 @@ const onSpeakerFactsChange = () => {
 };
 Hooks.on("updateActor", (_actor, change) => "ownership" in change && onSpeakerFactsChange());
 Hooks.on("updateUser", (_user, change) => "character" in change && onSpeakerFactsChange());
-Hooks.on("updateToken", (_token, change) => ("actorId" in change || hasModuleFlagChange(change)) && onSpeakerFactsChange());
+Hooks.on("updateToken", (_token, change) => ("actorId" in change || hasSpeakerMarkChange(change)) && onSpeakerFactsChange());
 // The own bubble of a token or of an actor (all tokens of the actor) changed.
 Hooks.on("updateToken", (tokenDocument, change) => {
   if (!hasBubbleChange(change)) return;

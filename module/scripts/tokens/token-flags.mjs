@@ -7,9 +7,9 @@ const FLAG = Object.freeze({
   BUBBLE_ID: "bubbleId",
 });
 
-/** @returns {boolean} Did a token update change a flag of this module? */
-export function hasModuleFlagChange(change) {
-  return foundry.utils.hasProperty(change, `flags.${MODULE_ID}`);
+/** @returns {boolean} Did a token update change the speaking mark? */
+export function hasSpeakerMarkChange(change) {
+  return hasFlagChange(change, FLAG.SPEAKER_USER_ID);
 }
 
 /** @returns {string|null} The user who marked this token as their speaking token. */
@@ -55,8 +55,13 @@ export function getBubbleActorOfSheet(actor) {
 
 /** @returns {boolean} Did a token or actor update change the document's own bubble? */
 export function hasBubbleChange(change) {
+  return hasFlagChange(change, FLAG.BUBBLE_ID);
+}
+
+/** A set arrives as the key, a removal as "-=key" (the update syntax of unsetFlag). */
+function hasFlagChange(change, flag) {
   const flags = change.flags?.[MODULE_ID] ?? {};
-  return FLAG.BUBBLE_ID in flags || `-=${FLAG.BUBBLE_ID}` in flags;
+  return flag in flags || `-=${flag}` in flags;
 }
 
 /**
@@ -64,7 +69,7 @@ export function hasBubbleChange(change) {
  * @param {User} user
  * @returns {import("./speaker-rule.mjs").TokenFacts[]}
  */
-export function describeSceneTokens(scene, user) {
+function describeSceneTokens(scene, user) {
   return scene.tokens.map((tokenDocument) => ({
     id: tokenDocument.id,
     actorId: tokenDocument.actorId ?? null,
