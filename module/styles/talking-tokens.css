@@ -1,0 +1,114 @@
+.talking-tokens .tt-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.talking-tokens .tt-status {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.talking-tokens .tt-status button,
+.talking-tokens .tt-status .tt-hint {
+  grid-column: 1 / -1;
+}
+
+.talking-tokens .tt-status-text {
+  margin: 0;
+}
+
+.talking-tokens .tt-status-dot,
+.talking-tokens .tt-speaking-dot {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+  background: var(--tt-dot-color, #888);
+}
+
+.talking-tokens .tt-tone-ok { --tt-dot-color: #3aa55d; }
+.talking-tokens .tt-tone-waiting { --tt-dot-color: #e0a800; }
+.talking-tokens .tt-tone-error { --tt-dot-color: #d9534f; }
+
+.talking-tokens .tt-setup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.talking-tokens .tt-setup summary {
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.talking-tokens .tt-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.talking-tokens .tt-member {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.talking-tokens .tt-member img {
+  border: none;
+  border-radius: 50%;
+}
+
+.talking-tokens .tt-person {
+  display: grid;
+  grid-template-columns: auto 8rem 1fr;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.talking-tokens .tt-speaking-dot.is-speaking {
+  --tt-dot-color: #3aa55d;
+  box-shadow: 0 0 0.4rem #3aa55d;
+}
+
+.talking-tokens .tt-hint {
+  margin: 0;
+  font-size: var(--font-size-12, 12px);
+  opacity: 0.8;
+}
+
+.talking-tokens .tt-checkbox {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.talking-tokens .tt-presets {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.talking-tokens .tt-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.talking-tokens .tt-speaker-token {
+  display: block;
+  opacity: 0.7;
+}
+
+/* The HUD button is a native button; reset the core button look so it matches the other HUD icons. */
+#token-hud .tt-speaker-toggle {
+  width: 36px;
+  height: 36px;
+  margin: 0;
+  padding: 0;
+  line-height: 36px;
+  font-size: var(--font-size-20, 20px);
+}

@@ -1,0 +1,30 @@
+{
+  "id": "talking-tokens",
+  "title": "Talking Tokens",
+  "description": "Shows a speech bubble on a token while its player speaks in Discord voice. A small bridge program on the GM computer reports who speaks.",
+  "version": "0.1.0",
+  "authors": [
+    {
+      "name": "b1o",
+      "url": "https://github.com/b1o"
+    }
+  ],
+  "compatibility": {
+    "minimum": "11",
+    "verified": "11.314"
+  },
+  "esmodules": [
+    "scripts/main.mjs"
+  ],
+  "styles": [
+    "styles/talking-tokens.css"
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ],
+  "socket": true
+}

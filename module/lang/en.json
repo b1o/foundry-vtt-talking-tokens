@@ -1,0 +1,103 @@
+{
+  "TALKING_TOKENS": {
+    "Controls": {
+      "OpenPanel": "Talking Tokens"
+    },
+    "Panel": {
+      "Title": "Talking Tokens",
+      "Setup": "Bot setup",
+      "Token": "Discord bot token",
+      "TokenPlaceholder": "Paste the token from the Discord Developer Portal",
+      "SaveToken": "Save token",
+      "TokenSaved": "Token saved. The bridge keeps it on this computer; Foundry does not store it.",
+      "WhoAreYou": "Who are you? Click your own name.",
+      "JoinVoiceFirst": "Join a voice channel in Discord. Your name then shows here.",
+      "AutoConnect": "Connect to Discord when the world loads",
+      "Placement": "Bubble position",
+      "StartPlacement": "Drag to place on the selected token",
+      "PlacementActive": "Drag the bubble on {token}, then save.",
+      "SavePlacement": "Save position",
+      "CancelPlacement": "Cancel",
+      "SelectTokenFirst": "Select a token on the canvas first.",
+      "People": "Players",
+      "Speaking": "Speaking",
+      "NoSpeakerToken": "no speaking token in this scene",
+      "NotLinked": "— Not linked —",
+      "LinkedNotInVoice": "Linked (not in voice now)",
+      "NoPlayers": "This world has no players yet."
+    },
+    "Preset": {
+      "top": "Above",
+      "top-left": "Top left",
+      "top-right": "Top right",
+      "left": "Left",
+      "right": "Right",
+      "bottom": "Below"
+    },
+    "Hud": {
+      "Mark": "My voice shows on this token",
+      "Unmark": "Stop showing my voice on this token"
+    },
+    "Status": {
+      "not-localhost": "Open Foundry on this computer through localhost (for example http://localhost:30000) to use Talking Tokens.",
+      "connecting": "Looking for the Talking Tokens bridge…",
+      "bridge-not-found": "The Talking Tokens bridge is not running on this computer. Start talking-tokens-bridge.exe with a double-click; this panel then connects by itself.",
+      "incompatible": "The bridge version does not match this module. Download the bridge that belongs to this module version.",
+      "no-token": "Paste your Discord bot token to finish the setup.",
+      "idle": "Not connected to Discord.",
+      "logging-in": "Logging in to Discord…",
+      "token-rejected": "Discord rejected the bot token. Copy it again from the Discord Developer Portal.",
+      "discord-unreachable": "Discord cannot be reached. Check the internet connection.",
+      "no-server": "The bot is in no Discord server. Invite it to your server.",
+      "no-gm": "Join a voice channel, then click your own name under Bot setup.",
+      "gm-not-in-voice": "Waiting for you to join a voice channel.",
+      "missing-permission": "The bot cannot join #{channel}. Give it the Connect permission, then disconnect and connect.",
+      "joining": "Joining #{channel}…",
+      "listening": "Listening in #{channel}."
+    },
+    "Action": {
+      "connect": "Connect",
+      "disconnect": "Disconnect",
+      "setup": "Open setup",
+      "invite": "Invite the bot to a server"
+    },
+    "TokenError": {
+      "token-rejected": "Discord rejected this token. Copy it again from the Discord Developer Portal (Bot → Reset Token).",
+      "discord-unreachable": "Discord cannot be reached, so the token was not checked. Try again."
+    },
+    "BubbleStyle": {
+      "classic": "Classic",
+      "dots": "Typing dots",
+      "thought": "Thought cloud",
+      "shout": "Shout",
+      "whisper": "Whisper",
+      "custom": "Custom image"
+    },
+    "Notifications": {
+      "ImageFailed": "The image {path} could not be loaded. The classic bubble shows instead.",
+      "MarkFailed": "The speaking token could not be changed."
+    },
+    "Settings": {
+      "bubbleStyle": {
+        "Name": "Bubble",
+        "Hint": "The bubble that shows on a token while its player speaks. Set the position in the Talking Tokens panel."
+      },
+      "indicatorImage": {
+        "Name": "Custom image",
+        "Hint": "Used when Bubble is \"Custom image\"."
+      },
+      "indicatorScale": {
+        "Name": "Bubble size",
+        "Hint": "At 1, the bubble is half as tall as the token."
+      },
+      "holdTimeMs": {
+        "Name": "Hold time (ms)",
+        "Hint": "How long the bubble stays after the player stops speaking. This stops flicker between words."
+      },
+      "showIndicators": {
+        "Name": "Show speech bubbles",
+        "Hint": "Turn off to hide all speech bubbles on this computer only."
+      }
+    }
+  }
+}

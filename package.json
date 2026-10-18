@@ -1,0 +1,19 @@
+{
+  "name": "talking-tokens",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "bridge"
+  ],
+  "scripts": {
+    "lint": "eslint ."
+  },
+  "volta": {
+    "node": "24.21.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "eslint": "10.13.0",
+    "globals": "17.13.0"
+  }
+}

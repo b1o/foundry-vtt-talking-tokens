@@ -1,0 +1,24 @@
+{
+  "name": "talking-tokens-bridge",
+  "version": "0.1.0",
+  "description": "Reports who speaks in the Discord voice channel of the GM to the Talking Tokens Foundry module.",
+  "private": true,
+  "type": "module",
+  "main": "src/main.mjs",
+  "scripts": {
+    "start": "node src/main.mjs",
+    "build": "bun build src/main.mjs --compile --target=bun-windows-x64 --outfile out/talking-tokens-bridge.exe --external ffmpeg-static --external @discordjs/opus --external opusscript --external node-opus --external sodium-native --external sodium --external libsodium-wrappers --external @stablelib/xchacha20poly1305 --external @noble/ciphers --external zlib-sync --external bufferutil --external utf-8-validate --external erlpack --external @discordjs/zlib-sync",
+    "test-client": "node scripts/test-client.mjs"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "volta": {
+    "extends": "../package.json"
+  },
+  "dependencies": {
+    "@discordjs/voice": "0.19.2",
+    "discord.js": "14.27.0",
+    "ws": "8.22.0"
+  }
+}

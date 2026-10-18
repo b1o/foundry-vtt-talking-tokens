@@ -1,0 +1,90 @@
+<div class="tt-panel">
+  <section class="tt-status tt-tone-{{status.tone}}" aria-live="polite">
+    <span class="tt-status-dot" aria-hidden="true"></span>
+    <p class="tt-status-text">{{localize status.textKey channel=status.channelName}}</p>
+    {{#if status.actionKey}}
+      <button type="button" data-action="{{status.action}}" data-url="{{status.inviteUrl}}">
+        {{localize status.actionKey}}
+      </button>
+    {{/if}}
+    <label class="tt-checkbox">
+      <input type="checkbox" name="autoConnect" {{#if isAutoConnectOn}}checked{{/if}}>
+      {{localize "TALKING_TOKENS.Panel.AutoConnect"}}
+    </label>
+  </section>
+
+  <details class="tt-setup" {{#if isSetupOpen}}open{{/if}}>
+    <summary>{{localize "TALKING_TOKENS.Panel.Setup"}}</summary>
+
+    {{#if canSetToken}}
+      <label class="tt-field">
+        <span>{{localize "TALKING_TOKENS.Panel.Token"}}</span>
+        <input type="password" name="token" value="{{typedToken}}" autocomplete="off"
+               placeholder="{{localize 'TALKING_TOKENS.Panel.TokenPlaceholder'}}">
+      </label>
+      <button type="button" data-action="save-token">{{localize "TALKING_TOKENS.Panel.SaveToken"}}</button>
+      {{#if tokenResultKey}}<p class="tt-hint">{{localize tokenResultKey}}</p>{{/if}}
+    {{/if}}
+
+    {{#if inviteUrl}}
+      <button type="button" data-action="invite" data-url="{{inviteUrl}}">
+        {{localize "TALKING_TOKENS.Action.invite"}}
+      </button>
+    {{/if}}
+
+    {{#if hasDiscord}}
+      <h3>{{localize "TALKING_TOKENS.Panel.WhoAreYou"}}</h3>
+      {{#each gmCandidates}}
+        <button type="button" class="tt-member" data-action="pick-gm" data-discord-id="{{id}}">
+          <img src="{{avatarUrl}}" alt="" width="24" height="24"> {{name}} <small>#{{channelName}}</small>
+        </button>
+      {{else}}
+        <p class="tt-hint">{{localize "TALKING_TOKENS.Panel.JoinVoiceFirst"}}</p>
+      {{/each}}
+    {{/if}}
+  </details>
+
+  <section class="tt-appearance">
+    <h3>{{localize "TALKING_TOKENS.Panel.Placement"}}</h3>
+    {{#if placement.isActive}}
+      <p class="tt-hint">{{localize "TALKING_TOKENS.Panel.PlacementActive" token=placement.tokenName}}</p>
+      <div class="tt-row">
+        <button type="button" data-action="save-placement">{{localize "TALKING_TOKENS.Panel.SavePlacement"}}</button>
+        <button type="button" data-action="cancel-placement">{{localize "TALKING_TOKENS.Panel.CancelPlacement"}}</button>
+      </div>
+    {{else}}
+      <div class="tt-presets">
+        {{#each presets}}
+          <button type="button" data-action="apply-preset" data-preset="{{name}}">{{localize labelKey}}</button>
+        {{/each}}
+      </div>
+      <button type="button" data-action="start-placement">{{localize "TALKING_TOKENS.Panel.StartPlacement"}}</button>
+    {{/if}}
+  </section>
+
+  <section class="tt-people">
+    <h3>{{localize "TALKING_TOKENS.Panel.People"}}</h3>
+    {{#each players}}
+      <div class="tt-person">
+        <span class="tt-speaking-dot {{#if isSpeaking}}is-speaking{{/if}}" data-speaking-user="{{id}}"
+              title="{{localize 'TALKING_TOKENS.Panel.Speaking'}}"></span>
+        <label for="tt-link-{{id}}">
+          {{name}}
+          <small class="tt-speaker-token">
+            {{#if speakerTokenNames}}{{speakerTokenNames}}{{else}}{{localize "TALKING_TOKENS.Panel.NoSpeakerToken"}}{{/if}}
+          </small>
+        </label>
+        <select id="tt-link-{{id}}" data-user-id="{{id}}">
+          <option value="">{{localize "TALKING_TOKENS.Panel.NotLinked"}}</option>
+          {{#each options}}
+            <option value="{{value}}" {{#if selected}}selected{{/if}}>
+              {{#if labelKey}}{{localize labelKey}}{{else}}{{label}}{{/if}}
+            </option>
+          {{/each}}
+        </select>
+      </div>
+    {{else}}
+      <p class="tt-hint">{{localize "TALKING_TOKENS.Panel.NoPlayers"}}</p>
+    {{/each}}
+  </section>
+</div>

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 100" width="360" height="300">
+  <!-- Outline pass, then fill pass: the fill hides the inner strokes, so only the outer cloud edge shows. -->
+  <g fill="#1b1b1b">
+    <circle cx="34" cy="40" r="22.5"/>
+    <circle cx="60" cy="30" r="24.5"/>
+    <circle cx="86" cy="40" r="22.5"/>
+    <circle cx="48" cy="56" r="20.5"/>
+    <circle cx="74" cy="56" r="20.5"/>
+    <circle cx="24" cy="80" r="8.5"/>
+    <circle cx="12" cy="93" r="5.5"/>
+  </g>
+  <g fill="#ffffff">
+    <circle cx="34" cy="40" r="20"/>
+    <circle cx="60" cy="30" r="22"/>
+    <circle cx="86" cy="40" r="20"/>
+    <circle cx="48" cy="56" r="18"/>
+    <circle cx="74" cy="56" r="18"/>
+    <circle cx="24" cy="80" r="6"/>
+    <circle cx="12" cy="93" r="3"/>
+  </g>
+</svg>
