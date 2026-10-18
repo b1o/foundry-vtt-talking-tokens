@@ -108,12 +108,31 @@
 #controls .control-tool[data-tt-tone="waiting"] { color: #e0a800; }
 #controls .control-tool[data-tt-tone="error"] { color: #e5534b; }
 
-/* The HUD button is a native button; reset the core button look so it matches the other HUD icons. */
+/*
+ * The HUD microphone is a native button with the core .control-icon class, so it gets the size and look of the other
+ * HUD icons. Reset only what the core <button> style adds: the padding, and the right margin of "button > i" that
+ * pushed the icon off center.
+ */
 #token-hud .tt-speaker-toggle {
-  width: 36px;
-  height: 36px;
-  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
   padding: 0;
-  line-height: 36px;
-  font-size: var(--font-size-20, 20px);
+}
+
+#token-hud .tt-speaker-toggle > i {
+  margin: 0;
+  top: 0;
+}
+
+#token-hud .tt-speaker-toggle:focus-visible {
+  outline: 2px solid var(--color-border-highlight);
+}
+
+/* Marked: the same orange as other active HUD states, but with a glow and a bright icon, so it shows at a glance. */
+#token-hud .tt-speaker-toggle.active {
+  color: var(--color-text-light-highlight);
+  border-color: var(--color-border-highlight);
+  box-shadow: 0 0 10px var(--color-shadow-highlight);
 }
