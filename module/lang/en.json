@@ -1,7 +1,8 @@
 {
   "TALKING_TOKENS": {
     "Controls": {
-      "OpenPanel": "Talking Tokens"
+      "OpenPanel": "Talking Tokens",
+      "Status": "Talking Tokens: {status}"
     },
     "Panel": {
       "Title": "Talking Tokens",

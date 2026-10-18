@@ -20,6 +20,17 @@ export function getTokenHudRightColumn(html) {
   return root.querySelector(".col.right");
 }
 
+/**
+ * One tool button of the scene controls (templates/hud/controls.html in v11: li.control-tool[data-tool]). v13
+ * renders the controls with ApplicationV2, which passes an element, not jQuery.
+ * @param {HTMLElement|jQuery} html
+ * @returns {HTMLElement|null}
+ */
+export function getSceneControlTool(html, toolName) {
+  const root = html instanceof HTMLElement ? html : html[0];
+  return root?.querySelector(`[data-tool="${toolName}"]`) ?? null;
+}
+
 /** v13 moved loadTexture to foundry.canvas. */
 export function loadTextureCompat(path) {
   const load = foundry.canvas?.loadTexture ?? loadTexture;

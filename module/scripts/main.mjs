@@ -14,6 +14,7 @@ import { PlacementMode } from "./tokens/placement-mode.mjs";
 import { addSpeakerButton } from "./tokens/speaker-hud-button.mjs";
 import { findSceneSpeakerTokenNames, hasModuleFlagChange } from "./tokens/token-flags.mjs";
 import { TokenIndicators } from "./tokens/token-indicators.mjs";
+import { addControlButton, showStatusOnControlButton } from "./ui/control-button.mjs";
 import { ControlPanel } from "./ui/control-panel.mjs";
 import { buildPanelView } from "./ui/panel-view.mjs";
 
@@ -48,7 +49,10 @@ const link = new BridgeLink({
   }),
   isAutoConnectOn,
   events: {
-    onChange: () => panel.refresh(),
+    onChange: () => {
+      panel.refresh();
+      if (ui.controls?.element) showConnectionOnControls(ui.controls.element);
+    },
     onSpeakingSnapshot: (discordIds) => relay.onBridgeSnapshot(discordIds),
     onSpeaking: (discordId, speaking) => relay.onBridgeSpeaking(discordId, speaking),
   },
@@ -58,6 +62,8 @@ const placement = new PlacementMode({
   getTexture: (token) => indicators.waitForTexture(token),
   onChange: () => panel.refresh(),
 });
+
+const showConnectionOnControls = (html) => showStatusOnControlButton(html, describeConnection(link.facts, isLocalhost));
 
 const linkUser = (userId, discordId) => updateUserMapping((mapping) => assignDiscordId(mapping, userId, discordId));
 
@@ -111,15 +117,9 @@ Hooks.once("ready", () => {
 });
 
 Hooks.on("getSceneControlButtons", (controls) => {
-  if (!game.user.isGM) return;
-  controls.find((control) => control.name === "token")?.tools.push({
-    name: "talking-tokens",
-    title: "TALKING_TOKENS.Controls.OpenPanel",
-    icon: "fas fa-comment-dots",
-    button: true,
-    onClick: () => panel.render(true),
-  });
+  if (game.user.isGM) addControlButton(controls, () => panel.render(true));
 });
+Hooks.on("renderSceneControls", (_app, html) => game.user.isGM && showConnectionOnControls(html));
 
 Hooks.on("renderTokenHUD", addSpeakerButton);
 

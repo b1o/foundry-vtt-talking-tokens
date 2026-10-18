@@ -103,6 +103,11 @@
   opacity: 0.7;
 }
 
+/* The scene control button shows the connection tone (green, yellow, red) of the panel status. */
+#controls .control-tool[data-tt-tone="ok"] { color: #3aa55d; }
+#controls .control-tool[data-tt-tone="waiting"] { color: #e0a800; }
+#controls .control-tool[data-tt-tone="error"] { color: #e5534b; }
+
 /* The HUD button is a native button; reset the core button look so it matches the other HUD icons. */
 #token-hud .tt-speaker-toggle {
   width: 36px;
