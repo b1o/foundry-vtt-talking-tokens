@@ -49,7 +49,7 @@ jobs:
       # module.json is at the root of the zip, as Foundry expects.
       - name: Build module.zip
         working-directory: module
-        run: zip -r ../module.zip .
+        run: cp ../LICENSE . && zip -r ../module.zip .
 
       - name: Attach the module assets to the release
         env:

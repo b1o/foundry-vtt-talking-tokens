@@ -1,4 +1,4 @@
-# Talking Tokens (Foundry VTT v11 and later)
+# Talking Tokens (Foundry VTT v11)
 
 Talking Tokens shows a speech bubble on a token while its player speaks in Discord voice.
 
@@ -11,6 +11,17 @@ Only the GM does the setup. Players install nothing.
 - [Each game session](#each-game-session)
 - [Troubleshooting](#troubleshooting)
 - [Privacy](#privacy)
+- [License](#license)
+
+## Disclaimer
+
+I made this module first for personal use. It has the features that I find useful for my own group.
+
+- The module is heavily vibe-coded. I do not give regular maintenance. I make updates only when I need them myself.
+- The module targets Foundry VTT v11. I do not guarantee that it works in later versions, especially v13 and later.
+- I do not guarantee that I accept or review a pull request. You are free to fork the module and change it, under
+  the terms of the [license](#license).
+- Use the module at your own risk. I take no responsibility for problems that come from the use of this module.
 
 ## Setup
 
@@ -243,3 +254,8 @@ and no names.
 - The bot token stays in `%APPDATA%\talking-tokens-bridge\config.json` on the GM computer. It goes to the bridge
   once, from the panel, and never back to Foundry. Foundry stores only the link between a Foundry user and a Discord
   user id.
+
+## License
+
+[MIT](LICENSE). You are free to use, change, and share the module. Keep the copyright notice in all copies, so that
+the author gets credit.
