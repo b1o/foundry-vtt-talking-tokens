@@ -29,18 +29,37 @@ export function findSpeakerTokenIds(tokens, user) {
 }
 
 /**
- * The flag changes that toggle the mark of a user on one token. A user has at most one marked token per scene,
- * so marking a new token removes the mark from the old one.
+ * @typedef {{tokenId: string, speakerUserId: string|null}} MarkChange  null removes the mark.
+ */
+
+/**
+ * The flag changes that toggle the mark of a user on one token (the HUD microphone).
  * @param {TokenFacts[]} tokens  The tokens of the scene, as they are right before the write.
  * @param {string} tokenId
  * @param {string} userId
- * @returns {{tokenId: string, speakerUserId: string|null}[]} null removes the mark.
+ * @returns {MarkChange[]}
  */
 export function planMarkToggle(tokens, tokenId, userId) {
-  const target = tokens.find((token) => token.id === tokenId);
-  if (target?.speakerUserId === userId) return [{ tokenId, speakerUserId: null }];
+  if (isMarkedBy(tokens, tokenId, userId)) return [{ tokenId, speakerUserId: null }];
+  return planMark(tokens, tokenId, userId);
+}
+
+/**
+ * The flag changes that make one token the user's speaking token (the hotkey). A user has at most one marked token
+ * per scene, so marking a new token removes the mark from the old one. A token that is already marked stays as it is.
+ * @param {TokenFacts[]} tokens  The tokens of the scene, as they are right before the write.
+ * @param {string} tokenId
+ * @param {string} userId
+ * @returns {MarkChange[]}
+ */
+export function planMark(tokens, tokenId, userId) {
+  if (isMarkedBy(tokens, tokenId, userId)) return [];
   // Only owned tokens: the user cannot update another token, and findSpeakerTokenIds ignores such a mark anyway.
   const oldMarks = tokens.filter((token) => token.speakerUserId === userId && token.id !== tokenId
     && token.isOwnedByUser);
   return [...oldMarks.map((token) => ({ tokenId: token.id, speakerUserId: null })), { tokenId, speakerUserId: userId }];
+}
+
+function isMarkedBy(tokens, tokenId, userId) {
+  return tokens.find((token) => token.id === tokenId)?.speakerUserId === userId;
 }

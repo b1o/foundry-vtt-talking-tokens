@@ -102,6 +102,11 @@
         "Name": "Show speech bubbles",
         "Hint": "Turn off to hide all speech bubbles on this computer only."
       }
+    },
+    "Hotkey": {
+      "Name": "Speak as the hovered token",
+      "Hint": "Point at one of your tokens and press the key. Your voice then shows on that token in this scene.",
+      "Marked": "Your voice now shows on {token}."
     }
   }
 }

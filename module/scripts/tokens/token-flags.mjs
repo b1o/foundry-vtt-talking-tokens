@@ -1,5 +1,5 @@
 import { MODULE_ID } from "../module-id.mjs";
-import { findSpeakerTokenIds, planMarkToggle } from "./speaker-rule.mjs";
+import { findSpeakerTokenIds, planMark, planMarkToggle } from "./speaker-rule.mjs";
 
 /** All reads and writes of the token flags of this module go through this file. */
 const FLAG = Object.freeze({
@@ -57,17 +57,31 @@ export function findSceneSpeakerTokenNames(scene, user) {
 
 /**
  * Mark the token as the user's speaking token in its scene, or remove the mark if it is there already.
- * The scene is read right before the write, so a change by another user in the meantime is kept.
  * @param {TokenDocument} tokenDocument
  * @param {User} user
  */
 export function toggleSpeakerMark(tokenDocument, user) {
+  return applyMarkPlan(tokenDocument, user, planMarkToggle);
+}
+
+/**
+ * Make the token the user's speaking token in its scene. A marked token stays marked.
+ * @param {TokenDocument} tokenDocument
+ * @param {User} user
+ */
+export function markSpeakerToken(tokenDocument, user) {
+  return applyMarkPlan(tokenDocument, user, planMark);
+}
+
+/** The scene is read right before the write, so a change by another user in the meantime is kept. */
+async function applyMarkPlan(tokenDocument, user, plan) {
   const scene = tokenDocument.parent;
-  const plan = planMarkToggle(describeSceneTokens(scene, user), tokenDocument.id, user.id);
+  const changes = plan(describeSceneTokens(scene, user), tokenDocument.id, user.id);
+  if (changes.length === 0) return;
   const key = `flags.${MODULE_ID}.${FLAG.SPEAKER_USER_ID}`;
   const removeKey = `flags.${MODULE_ID}.-=${FLAG.SPEAKER_USER_ID}`;
-  const updates = plan.map(({ tokenId, speakerUserId }) => (speakerUserId
+  const updates = changes.map(({ tokenId, speakerUserId }) => (speakerUserId
     ? { _id: tokenId, [key]: speakerUserId }
     : { _id: tokenId, [removeKey]: null }));
-  return scene.updateEmbeddedDocuments("Token", updates);
+  await scene.updateEmbeddedDocuments("Token", updates);
 }

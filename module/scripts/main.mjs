@@ -12,6 +12,7 @@ import { SpeakingState } from "./speaking/speaking-state.mjs";
 import { ANCHOR_PRESETS } from "./tokens/indicator-layout.mjs";
 import { PlacementMode } from "./tokens/placement-mode.mjs";
 import { addSpeakerButton } from "./tokens/speaker-hud-button.mjs";
+import { registerSpeakerHotkey } from "./tokens/speaker-hotkey.mjs";
 import { findSceneSpeakerTokenNames, hasModuleFlagChange } from "./tokens/token-flags.mjs";
 import { TokenIndicators } from "./tokens/token-indicators.mjs";
 import { addControlButton, showStatusOnControlButton } from "./ui/control-button.mjs";
@@ -109,6 +110,7 @@ Hooks.once("init", () => {
       panel.refresh();
     },
   });
+  registerSpeakerHotkey();
 });
 
 Hooks.once("ready", () => {
