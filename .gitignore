@@ -1,2 +1,4 @@
 node_modules/
 bridge/out/
+docs/screenshots-raw/*
+!docs/screenshots-raw/README.txt
