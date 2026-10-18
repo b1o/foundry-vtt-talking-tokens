@@ -5,6 +5,7 @@ import { ACTION } from "../bridge/connection-status.mjs";
 /** Actions that only buttons inside the panel use; the status line uses ACTION. */
 const PANEL_ACTION = Object.freeze({
   SAVE_TOKEN: "save-token",
+  OPEN_GUIDE: "open-guide",
   PICK_GM: "pick-gm",
   APPLY_PRESET: "apply-preset",
   START_PLACEMENT: "start-placement",
@@ -118,7 +119,11 @@ export class ControlPanel extends getApplicationClass() {
     switch (action) {
       case ACTION.CONNECT: return this.#commands.connect();
       case ACTION.DISCONNECT: return this.#commands.disconnect();
-      case ACTION.INVITE: return window.open(url, "_blank", "noopener");
+      case ACTION.INVITE:
+      case ACTION.DOWNLOAD_BRIDGE:
+      case ACTION.EXPLAIN_LOCALHOST:
+      case PANEL_ACTION.OPEN_GUIDE:
+        return window.open(url, "_blank", "noopener");
       case ACTION.SETUP: return this.element[0].querySelector("details.tt-setup")?.setAttribute("open", "");
       case PANEL_ACTION.SAVE_TOKEN: return this.#saveToken();
       case PANEL_ACTION.PICK_GM: return this.#commands.setGm(discordId);

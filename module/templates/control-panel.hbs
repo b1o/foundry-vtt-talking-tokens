@@ -3,7 +3,7 @@
     <span class="tt-status-dot" aria-hidden="true"></span>
     <p class="tt-status-text">{{localize status.textKey channel=status.channelName}}</p>
     {{#if status.actionKey}}
-      <button type="button" data-action="{{status.action}}" data-url="{{status.inviteUrl}}">
+      <button type="button" data-action="{{status.action}}" data-url="{{status.actionUrl}}">
         {{localize status.actionKey}}
       </button>
     {{/if}}
@@ -15,6 +15,10 @@
 
   <details class="tt-setup" {{#if isSetupOpen}}open{{/if}}>
     <summary>{{localize "TALKING_TOKENS.Panel.Setup"}}</summary>
+
+    <button type="button" data-action="open-guide" data-url="{{setupGuideUrl}}">
+      <i class="fas fa-book-open" aria-hidden="true"></i> {{localize "TALKING_TOKENS.Panel.OpenGuide"}}
+    </button>
 
     {{#if canSetToken}}
       <label class="tt-field">

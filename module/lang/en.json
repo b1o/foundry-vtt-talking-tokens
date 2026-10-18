@@ -24,7 +24,8 @@
       "NoSpeakerToken": "no speaking token in this scene",
       "NotLinked": "— Not linked —",
       "LinkedNotInVoice": "Linked (not in voice now)",
-      "NoPlayers": "This world has no players yet."
+      "NoPlayers": "This world has no players yet.",
+      "OpenGuide": "Setup guide"
     },
     "Preset": {
       "top": "Above",
@@ -41,7 +42,7 @@
     "Status": {
       "not-localhost": "Open Foundry on this computer through localhost (for example http://localhost:30000) to use Talking Tokens.",
       "connecting": "Looking for the Talking Tokens bridge…",
-      "bridge-not-found": "The Talking Tokens bridge is not running on this computer. Start talking-tokens-bridge.exe with a double-click; this panel then connects by itself.",
+      "bridge-not-found": "The Talking Tokens bridge is not running on this computer. Start talking-tokens-bridge.exe with a double-click; this panel then connects by itself. If you do not have the program yet, download it.",
       "incompatible": "The bridge version does not match this module. Download the bridge that belongs to this module version.",
       "no-token": "Paste your Discord bot token to finish the setup.",
       "idle": "Not connected to Discord.",
@@ -59,7 +60,9 @@
       "connect": "Connect",
       "disconnect": "Disconnect",
       "setup": "Open setup",
-      "invite": "Invite the bot to a server"
+      "invite": "Invite the bot to a server",
+      "download-bridge": "Download the bridge",
+      "explain-localhost": "Why?"
     },
     "TokenError": {
       "token-rejected": "Discord rejected this token. Copy it again from the Discord Developer Portal (Bot → Reset Token).",

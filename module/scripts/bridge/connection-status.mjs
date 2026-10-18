@@ -1,3 +1,4 @@
+import { BRIDGE_DOWNLOAD_URL, TROUBLESHOOTING_URL } from "../links.mjs";
 import { BRIDGE_STATE } from "../protocol.mjs";
 import { LINK_STATE } from "./bridge-client.mjs";
 
@@ -17,13 +18,15 @@ export const ACTION = Object.freeze({
   DISCONNECT: "disconnect",
   SETUP: "setup",
   INVITE: "invite",
+  DOWNLOAD_BRIDGE: "download-bridge",
+  EXPLAIN_LOCALHOST: "explain-localhost",
 });
 
 const PRESENTATION = {
-  [PANEL_STATE.NOT_LOCALHOST]: { tone: TONE.ERROR, action: null },
+  [PANEL_STATE.NOT_LOCALHOST]: { tone: TONE.ERROR, action: ACTION.EXPLAIN_LOCALHOST },
   [PANEL_STATE.CONNECTING]: { tone: TONE.WAITING, action: null },
-  [PANEL_STATE.BRIDGE_NOT_FOUND]: { tone: TONE.ERROR, action: null },
-  [PANEL_STATE.INCOMPATIBLE]: { tone: TONE.ERROR, action: null },
+  [PANEL_STATE.BRIDGE_NOT_FOUND]: { tone: TONE.ERROR, action: ACTION.DOWNLOAD_BRIDGE },
+  [PANEL_STATE.INCOMPATIBLE]: { tone: TONE.ERROR, action: ACTION.DOWNLOAD_BRIDGE },
   [PANEL_STATE.NO_TOKEN]: { tone: TONE.WAITING, action: ACTION.SETUP },
   [PANEL_STATE.IDLE]: { tone: TONE.WAITING, action: ACTION.CONNECT },
   [PANEL_STATE.LOGGING_IN]: { tone: TONE.WAITING, action: null },
@@ -42,6 +45,7 @@ const PRESENTATION = {
  * @property {string} state  A value of PANEL_STATE.
  * @property {string} tone   A value of TONE.
  * @property {string|null} action  A value of ACTION: the one button that the status line offers.
+ * @property {string|null} actionUrl  The web page that the action opens, if the action is a link.
  * @property {string|null} channelName
  * @property {string|null} inviteUrl
  */
@@ -53,12 +57,25 @@ const PRESENTATION = {
  */
 export function describeConnection(facts, isLocalhost) {
   const state = panelState(facts, isLocalhost);
+  const { tone, action } = PRESENTATION[state];
+  const inviteUrl = facts.status?.inviteUrl ?? null;
   return {
     state,
-    ...PRESENTATION[state],
+    tone,
+    action,
+    actionUrl: actionUrl(action, inviteUrl),
     channelName: facts.status?.channelName ?? null,
-    inviteUrl: facts.status?.inviteUrl ?? null,
+    inviteUrl,
   };
+}
+
+function actionUrl(action, inviteUrl) {
+  switch (action) {
+    case ACTION.INVITE: return inviteUrl;
+    case ACTION.DOWNLOAD_BRIDGE: return BRIDGE_DOWNLOAD_URL;
+    case ACTION.EXPLAIN_LOCALHOST: return TROUBLESHOOTING_URL;
+    default: return null;
+  }
 }
 
 function panelState(facts, isLocalhost) {

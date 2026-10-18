@@ -1,4 +1,5 @@
 import { PANEL_STATE } from "../bridge/connection-status.mjs";
+import { SETUP_GUIDE_URL } from "../links.mjs";
 import { ANCHOR_PRESETS } from "../tokens/indicator-layout.mjs";
 
 /** In these states the setup section opens by itself, because the GM must act there. */
@@ -40,6 +41,7 @@ export function buildPanelView(input) {
     canSetToken: status.state !== PANEL_STATE.NOT_LOCALHOST && status.state !== PANEL_STATE.BRIDGE_NOT_FOUND,
     tokenResultKey: tokenResultKey(tokenResult),
     inviteUrl: status.inviteUrl,
+    setupGuideUrl: SETUP_GUIDE_URL,
     gmCandidates: hasDiscord ? voiceMembers : [],
     hasDiscord,
     isAutoConnectOn,
