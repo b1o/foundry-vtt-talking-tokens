@@ -25,7 +25,7 @@ export function addControlButton(controls, onClick) {
 export function showStatusOnControlButton(html, status) {
   const tool = getSceneControlTool(html, TOOL_NAME);
   if (!tool) return;
-  const text = game.i18n.format(`TALKING_TOKENS.Status.${status.state}`, { channel: status.channelName });
+  const text = game.i18n.format(`TALKING_TOKENS.Status.${status.state}`, status.textData);
   const label = game.i18n.format("TALKING_TOKENS.Controls.Status", { status: text });
   tool.dataset.ttTone = status.tone;
   tool.dataset.tooltip = label;

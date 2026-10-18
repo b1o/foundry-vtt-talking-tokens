@@ -1,7 +1,17 @@
 <div class="tt-panel">
   <section class="tt-status tt-tone-{{status.tone}}" aria-live="polite">
     <span class="tt-status-dot" aria-hidden="true"></span>
-    <p class="tt-status-text">{{localize status.textKey channel=status.channelName}}</p>
+    <p class="tt-status-text">
+      {{localize status.textKey channel=status.textData.channel bridge=status.textData.bridge module=status.textData.module}}
+    </p>
+    {{#if voiceSummary}}
+      <p class="tt-hint tt-voice-summary">
+        {{localize "TALKING_TOKENS.Panel.VoiceSummary" linked=voiceSummary.linkedCount total=voiceSummary.memberCount}}
+        {{#if voiceSummary.unlinkedNames}}
+          {{localize "TALKING_TOKENS.Panel.NotLinkedNames" names=voiceSummary.unlinkedNames}}
+        {{/if}}
+      </p>
+    {{/if}}
     {{#if status.actionKey}}
       <button type="button" data-action="{{status.action}}" data-url="{{status.actionUrl}}">
         {{localize status.actionKey}}

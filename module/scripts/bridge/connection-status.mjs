@@ -20,6 +20,7 @@ export const ACTION = Object.freeze({
   INVITE: "invite",
   DOWNLOAD_BRIDGE: "download-bridge",
   EXPLAIN_LOCALHOST: "explain-localhost",
+  HOW_TO_FIX: "how-to-fix",
 });
 
 const PRESENTATION = {
@@ -35,7 +36,8 @@ const PRESENTATION = {
   [PANEL_STATE.NO_SERVER]: { tone: TONE.ERROR, action: ACTION.INVITE },
   [PANEL_STATE.NO_GM]: { tone: TONE.WAITING, action: ACTION.SETUP },
   [PANEL_STATE.GM_NOT_IN_VOICE]: { tone: TONE.WAITING, action: ACTION.DISCONNECT },
-  [PANEL_STATE.MISSING_PERMISSION]: { tone: TONE.ERROR, action: ACTION.DISCONNECT },
+  // The bridge sees a permission change by itself and joins then, so the GM only needs to know the fix.
+  [PANEL_STATE.MISSING_PERMISSION]: { tone: TONE.ERROR, action: ACTION.HOW_TO_FIX },
   [PANEL_STATE.JOINING]: { tone: TONE.WAITING, action: ACTION.DISCONNECT },
   [PANEL_STATE.LISTENING]: { tone: TONE.OK, action: ACTION.DISCONNECT },
 };
@@ -48,24 +50,28 @@ const PRESENTATION = {
  * @property {string|null} actionUrl  The web page that the action opens, if the action is a link.
  * @property {string|null} channelName
  * @property {string|null} inviteUrl
+ * @property {{channel: string|null, bridge: string, module: string}} textData  The values for the status text.
  */
 
 /**
  * @param {import("./bridge-link.mjs").BridgeFacts} facts
- * @param {boolean} isLocalhost  Was this Foundry page opened through localhost?
+ * @param {{isLocalhost: boolean, moduleVersion: string}} page  isLocalhost: was this Foundry page opened through
+ *   localhost?
  * @returns {ConnectionStatus}
  */
-export function describeConnection(facts, isLocalhost) {
+export function describeConnection(facts, { isLocalhost, moduleVersion }) {
   const state = panelState(facts, isLocalhost);
   const { tone, action } = PRESENTATION[state];
   const inviteUrl = facts.status?.inviteUrl ?? null;
+  const channelName = facts.status?.channelName ?? null;
   return {
     state,
     tone,
     action,
     actionUrl: actionUrl(action, inviteUrl),
-    channelName: facts.status?.channelName ?? null,
+    channelName,
     inviteUrl,
+    textData: { channel: channelName, bridge: facts.bridgeVersion ?? "?", module: moduleVersion },
   };
 }
 
@@ -73,7 +79,9 @@ function actionUrl(action, inviteUrl) {
   switch (action) {
     case ACTION.INVITE: return inviteUrl;
     case ACTION.DOWNLOAD_BRIDGE: return BRIDGE_DOWNLOAD_URL;
-    case ACTION.EXPLAIN_LOCALHOST: return TROUBLESHOOTING_URL;
+    case ACTION.EXPLAIN_LOCALHOST:
+    case ACTION.HOW_TO_FIX:
+      return TROUBLESHOOTING_URL;
     default: return null;
   }
 }

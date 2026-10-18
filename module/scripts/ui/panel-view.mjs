@@ -58,6 +58,7 @@ export function buildPanelView(input) {
     noBridgeTextKey: NO_BRIDGE_TEXT[status.state] ?? null,
     canDownloadBridge: status.state !== PANEL_STATE.NOT_LOCALHOST,
     bridgeDownloadUrl: BRIDGE_DOWNLOAD_URL,
+    voiceSummary: status.state === PANEL_STATE.LISTENING ? summarizeVoice(voiceMembers, mapping, status.channelName) : null,
     tokenResultKey: tokenResultKey(tokenResult),
     inviteUrl: status.inviteUrl,
     setupGuideUrl: SETUP_GUIDE_URL,
@@ -83,6 +84,21 @@ export function buildPanelView(input) {
       speakerTokenNames: user.speakerTokenNames.join(", "),
       options: memberOptions(voiceMembers, mapping[user.id] ?? null),
     })),
+  };
+}
+
+/**
+ * Who is in the bot's channel, and who of them has no Foundry user: their voice shows on no token.
+ * The bridge reports the channel by name only; two servers with the same channel name count together.
+ */
+function summarizeVoice(voiceMembers, mapping, channelName) {
+  const linkedIds = new Set(Object.values(mapping));
+  const inChannel = voiceMembers.filter((member) => member.channelName === channelName);
+  const unlinked = inChannel.filter((member) => !linkedIds.has(member.id));
+  return {
+    memberCount: inChannel.length,
+    linkedCount: inChannel.length - unlinked.length,
+    unlinkedNames: unlinked.map((member) => member.name).join(", "),
   };
 }
 

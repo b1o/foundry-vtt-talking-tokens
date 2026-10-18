@@ -151,6 +151,7 @@ export class ControlPanel extends getApplicationClass() {
       case ACTION.INVITE:
       case ACTION.DOWNLOAD_BRIDGE:
       case ACTION.EXPLAIN_LOCALHOST:
+      case ACTION.HOW_TO_FIX:
       case PANEL_ACTION.OPEN_GUIDE:
         return window.open(url, "_blank", "noopener");
       case ACTION.SETUP: return this.element[0].querySelector("details.tt-setup")?.setAttribute("open", "");

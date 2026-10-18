@@ -3,6 +3,7 @@ import { BridgeLink } from "./bridge/bridge-link.mjs";
 import { describeConnection, isLoopbackHostname } from "./bridge/connection-status.mjs";
 import { StatusHistory } from "./bridge/status-history.mjs";
 import { assignDiscordId } from "./mapping/user-mapping.mjs";
+import { MODULE_ID } from "./module-id.mjs";
 import { bridgeUrl } from "./protocol.mjs";
 import {
   addLibraryBubble, getDefaultBubbleId, getHoldTimeMs, getIndicatorScale, getUserMapping, isAutoConnectOn,
@@ -61,7 +62,7 @@ const link = new BridgeLink({
   isAutoConnectOn,
   events: {
     onChange: () => {
-      statusHistory.record(describeConnection(link.facts, isLocalhost));
+      statusHistory.record(currentStatus());
       panel.refresh();
       if (ui.controls?.element) showConnectionOnControls(ui.controls.element);
     },
@@ -76,7 +77,11 @@ const placement = new PlacementMode({
   onChange: () => panel.refresh(),
 });
 
-const showConnectionOnControls = (html) => showStatusOnControlButton(html, describeConnection(link.facts, isLocalhost));
+const currentStatus = () => describeConnection(link.facts, {
+  isLocalhost, moduleVersion: game.modules.get(MODULE_ID).version,
+});
+
+const showConnectionOnControls = (html) => showStatusOnControlButton(html, currentStatus());
 
 const describeSelectedToken = (token) => token && {
   id: token.id, name: token.name, bubbleId: getTokenBubbleId(token.document),
@@ -86,7 +91,7 @@ const linkUser = (userId, discordId) => updateUserMapping((mapping) => assignDis
 
 const panel = new ControlPanel({
   getView: () => buildPanelView({
-    status: describeConnection(link.facts, isLocalhost),
+    status: currentStatus(),
     voiceMembers: link.facts.voiceMembers,
     users: game.users.map((user) => ({
       id: user.id, name: user.name, isGM: user.isGM, speakerTokenNames: findSceneSpeakerTokenNames(canvas.scene, user),
@@ -136,7 +141,7 @@ const panel = new ControlPanel({
     },
     testUser: (userId) => relay.startTest(userId),
     copyDiagnostics: () => copyDiagnostics({
-      facts: link.facts, status: describeConnection(link.facts, isLocalhost), history: statusHistory.entries,
+      facts: link.facts, status: currentStatus(), history: statusHistory.entries,
       mapping: getUserMapping(),
     }),
     setTokenBubble: (tokenId, bubbleId) => {

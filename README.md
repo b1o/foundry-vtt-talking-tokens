@@ -185,7 +185,7 @@ The status line at the top of the panel always shows one message. Find the messa
 | "Open Foundry on this computer through localhost …" | Open Foundry on the GM computer through the desktop app or `http://localhost:30000`. A browser blocks the connection to the bridge from any other address. |
 | "Looking for the Talking Tokens bridge…" | Wait a few seconds. If the message stays, reload Foundry (F5). |
 | "The Talking Tokens bridge is not running on this computer." | Double-click `talking-tokens-bridge.exe` (step 8). The panel connects by itself. If the black window closes at once, see [The bridge window closes](#the-bridge-window-closes). |
-| "The bridge version does not match this module." | Download the [newest bridge](https://github.com/b1o/foundry-vtt-talking-tokens/releases/latest/download/talking-tokens-bridge.exe), close the old bridge window, and start the new file. Also update the module in the Foundry setup screen. |
+| "The bridge is version … This module needs the bridge of version …" | Download the [newest bridge](https://github.com/b1o/foundry-vtt-talking-tokens/releases/latest/download/talking-tokens-bridge.exe), close the old bridge window, and start the new file. Also update the module in the Foundry setup screen. |
 | "Paste your Discord bot token to finish the setup." | Do steps 1 to 6 and step 13. |
 | "Not connected to Discord." | Click **Connect**. To connect each time the world loads, tick **Connect to Discord when the world loads**. |
 | "Logging in to Discord…" | Wait. If this stays for more than a minute, close the bridge window and start the bridge again. |
@@ -194,9 +194,9 @@ The status line at the top of the panel always shows one message. Find the messa
 | "The bot is in no Discord server." | Do steps 14 to 16. |
 | "Join a voice channel, then click your own name under Bot setup." | Do steps 17 and 18. |
 | "Waiting for you to join a voice channel." | Join a voice channel in Discord. The bot follows you. |
-| "The bot cannot join #channel." | In Discord, open the channel settings → **Permissions**. Give the bot (or its role) **View Channel** and **Connect**. Then click **Disconnect** and **Connect** in the panel. A full channel (user limit) also stops the bot. |
+| "The bot cannot join #channel." | In Discord, open the channel settings → **Permissions**. Give the bot (or its role) **View Channel** and **Connect**. The bot then joins by itself. A full channel (user limit) also stops the bot. |
 | "Joining #channel…" | Wait a few seconds. If this stays, click **Disconnect**, then **Connect**. |
-| "Listening in #channel." | All is well. If a bubble does not show, see below. |
+| "Listening in #channel." | All is well. The line below it counts the linked people and names the people who are not linked; link them under **Players**. If a bubble does not show, see below. |
 
 ### A bubble does not show
 

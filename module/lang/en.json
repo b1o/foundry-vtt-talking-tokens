@@ -21,6 +21,8 @@
       "SelectTokenFirst": "Select a token on the canvas first.",
       "People": "Players",
       "Speaking": "Speaking",
+      "VoiceSummary": "{linked} of {total} people in the channel are linked to a Foundry user.",
+      "NotLinkedNames": "Not linked, so their voice shows on no token: {names}.",
       "NoSpeakerToken": "no speaking token in this scene",
       "NotLinked": "— Not linked —",
       "LinkedNotInVoice": "Linked (not in voice now)",
@@ -57,7 +59,7 @@
       "not-localhost": "Open Foundry on this computer through localhost (for example http://localhost:30000) to use Talking Tokens.",
       "connecting": "Looking for the Talking Tokens bridge…",
       "bridge-not-found": "The Talking Tokens bridge is not running on this computer. Start talking-tokens-bridge.exe with a double-click; this panel then connects by itself. If you do not have the program yet, download it.",
-      "incompatible": "The bridge version does not match this module. Download the bridge that belongs to this module version.",
+      "incompatible": "The bridge is version {bridge}. This module needs the bridge of version {module}. Download it, close the old bridge window, and start the new bridge.",
       "no-token": "Paste your Discord bot token to finish the setup.",
       "idle": "Not connected to Discord.",
       "logging-in": "Logging in to Discord…",
@@ -66,7 +68,7 @@
       "no-server": "The bot is in no Discord server. Invite it to your server.",
       "no-gm": "Join a voice channel, then click your own name under Bot setup.",
       "gm-not-in-voice": "Waiting for you to join a voice channel.",
-      "missing-permission": "The bot cannot join #{channel}. Give it the Connect permission, then disconnect and connect.",
+      "missing-permission": "The bot cannot join #{channel}. In Discord, give the bot the View Channel and Connect permissions on that channel. The bot then joins by itself.",
       "joining": "Joining #{channel}…",
       "listening": "Listening in #{channel}."
     },
@@ -76,7 +78,8 @@
       "setup": "Open setup",
       "invite": "Invite the bot to a server",
       "download-bridge": "Download the bridge",
-      "explain-localhost": "Why?"
+      "explain-localhost": "Why?",
+      "how-to-fix": "How to fix"
     },
     "TokenError": {
       "token-rejected": "Discord rejected this token. Copy it again from the Discord Developer Portal (Bot → Reset Token).",
