@@ -69,7 +69,7 @@ jobs:
         with:
           node-version: 24.21.0
 
-      # The Bun version of spike 1 (PLAN.md section 10), which embeds the DAVE native addon without a patch.
+      # This Bun version embeds the DAVE native addon (@snazzah/davey) without a patch; check a new version first.
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2
         with:
