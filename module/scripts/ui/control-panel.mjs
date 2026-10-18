@@ -1,4 +1,5 @@
-import { getApplicationClass, getFilePickerClass } from "../compat.mjs";
+import { getFilePickerClass } from "../compat.mjs";
+import { LiveWindow } from "./live-window.mjs";
 import { MODULE_ID, TEMPLATE_PATH } from "../module-id.mjs";
 import { ACTION } from "../bridge/connection-status.mjs";
 
@@ -39,17 +40,12 @@ const PANEL_ACTION = Object.freeze({
  * @property {() => void} copyDiagnostics
  */
 
-/**
- * The GM window. It shows the view of panel-view.mjs and forwards each click as a command; it holds no rule.
- * Application V1, because v11 has no ApplicationV2.
- */
-export class ControlPanel extends getApplicationClass() {
+/** The GM window. It shows the view of panel-view.mjs and forwards each click as a command; it holds no rule. */
+export class ControlPanel extends LiveWindow {
   #getView;
   #commands;
   /** The token field keeps its text across renders, so a status change does not clear what the GM typed. */
   #typedToken = "";
-  #isRendering = false;
-  #hasPendingRender = false;
 
   /** @param {{getView: () => object, commands: PanelCommands}} options */
   constructor({ getView, commands }) {
@@ -72,32 +68,6 @@ export class ControlPanel extends getApplicationClass() {
 
   getData() {
     return { ...this.#getView(), typedToken: this.#typedToken };
-  }
-
-  /** Re-render only if open. */
-  refresh() {
-    if (this.rendered || this.#isRendering) this.render(false);
-  }
-
-  /**
-   * v11 drops a render that starts while another render runs (Application#_render, client/apps/app.js:364), and the
-   * first render waits for the template fetch. Bridge messages arrive in bursts, so a dropped render would leave the
-   * panel on old facts. A render request during a render runs once more when that render ends.
-   */
-  async _render(force, options) {
-    if (this.#isRendering) {
-      this.#hasPendingRender = true;
-      return;
-    }
-    this.#isRendering = true;
-    try {
-      await super._render(force, options);
-    } finally {
-      this.#isRendering = false;
-    }
-    if (!this.#hasPendingRender) return;
-    this.#hasPendingRender = false;
-    this.refresh();
   }
 
   /** Update the speaking dots in place: a full render would close a select that the GM has open. */

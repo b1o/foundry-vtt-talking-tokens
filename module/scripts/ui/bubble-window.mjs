@@ -1,8 +1,8 @@
-import { getApplicationClass } from "../compat.mjs";
 import { MODULE_ID, TEMPLATE_PATH } from "../module-id.mjs";
 import { log, notify } from "../output.mjs";
 import { getOwnBubbleId, setOwnBubbleId } from "../tokens/token-flags.mjs";
 import { buildBubbleChoiceView } from "./bubble-choice-view.mjs";
+import { LiveWindow } from "./live-window.mjs";
 
 /**
  * @typedef {object} BubbleOwner  A token or an actor that can have its own bubble.
@@ -15,9 +15,9 @@ import { buildBubbleChoiceView } from "./bubble-choice-view.mjs";
 
 /**
  * The own bubble of one token or one actor, opened from a sheet header. A click saves at once, so the GM sees the
- * choice on the canvas while the window is open. Application V1, because v11 has no ApplicationV2.
+ * choice on the canvas while the window is open.
  */
-class BubbleWindow extends getApplicationClass() {
+class BubbleWindow extends LiveWindow {
   #owner;
   #getLibrary;
   #onClose;
@@ -52,11 +52,6 @@ class BubbleWindow extends getApplicationClass() {
       hintKey,
       ...buildBubbleChoiceView(this.#getLibrary(), getOwnBubbleId(document), getInheritedBubble(), inheritedLabelKey),
     };
-  }
-
-  /** Re-render only if open. */
-  refresh() {
-    if (this.rendered) this.render(false);
   }
 
   activateListeners(html) {
