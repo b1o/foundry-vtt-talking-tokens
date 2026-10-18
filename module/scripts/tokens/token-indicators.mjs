@@ -55,6 +55,12 @@ export class TokenIndicators {
     for (const token of this.#sprites.keys()) this.relayoutToken(token);
   }
 
+  /** After a change of the token's own bubble: a shown sprite keeps its texture, so draw it again. */
+  redrawToken(token) {
+    this.#hide(token);
+    this.syncToken(token);
+  }
+
   forgetToken(token) {
     this.#hide(token);
   }

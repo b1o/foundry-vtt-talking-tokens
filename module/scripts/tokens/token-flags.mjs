@@ -22,6 +22,18 @@ export function getTokenBubbleId(tokenDocument) {
   return tokenDocument.getFlag(MODULE_ID, FLAG.BUBBLE_ID) ?? null;
 }
 
+/** @param {string|null} bubbleId  null: the token uses the world default again. */
+export function setTokenBubbleId(tokenDocument, bubbleId) {
+  if (bubbleId) return tokenDocument.setFlag(MODULE_ID, FLAG.BUBBLE_ID, bubbleId);
+  return tokenDocument.unsetFlag(MODULE_ID, FLAG.BUBBLE_ID);
+}
+
+/** @returns {boolean} Did a token update change the token's own bubble? */
+export function hasTokenBubbleChange(change) {
+  const flags = change.flags?.[MODULE_ID] ?? {};
+  return FLAG.BUBBLE_ID in flags || `-=${FLAG.BUBBLE_ID}` in flags;
+}
+
 /**
  * @param {Scene} scene
  * @param {User} user

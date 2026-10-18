@@ -203,3 +203,11 @@
   align-items: center;
   gap: 0.5rem;
 }
+
+.talking-tokens .tt-token-bubble {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}

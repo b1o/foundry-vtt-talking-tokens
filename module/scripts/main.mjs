@@ -15,7 +15,9 @@ import { IndicatorStyle } from "./tokens/indicator-style.mjs";
 import { PlacementMode } from "./tokens/placement-mode.mjs";
 import { addSpeakerButton } from "./tokens/speaker-hud-button.mjs";
 import { registerSpeakerHotkey } from "./tokens/speaker-hotkey.mjs";
-import { findSceneSpeakerTokenNames, hasModuleFlagChange } from "./tokens/token-flags.mjs";
+import {
+  findSceneSpeakerTokenNames, getTokenBubbleId, hasModuleFlagChange, hasTokenBubbleChange, setTokenBubbleId,
+} from "./tokens/token-flags.mjs";
 import { TokenIndicators } from "./tokens/token-indicators.mjs";
 import { addControlButton, showStatusOnControlButton } from "./ui/control-button.mjs";
 import { ControlPanel } from "./ui/control-panel.mjs";
@@ -70,6 +72,10 @@ const placement = new PlacementMode({
 
 const showConnectionOnControls = (html) => showStatusOnControlButton(html, describeConnection(link.facts, isLocalhost));
 
+const describeSelectedToken = (token) => token && {
+  id: token.id, name: token.name, bubbleId: getTokenBubbleId(token.document),
+};
+
 const linkUser = (userId, discordId) => updateUserMapping((mapping) => assignDiscordId(mapping, userId, discordId));
 
 const panel = new ControlPanel({
@@ -88,6 +94,7 @@ const panel = new ControlPanel({
       library: indicatorStyle.library, defaultBubbleId: getDefaultBubbleId(), scale: getIndicatorScale(),
       scaleRange: SCALE_RANGE,
     },
+    selectedToken: describeSelectedToken(canvas.tokens?.controlled[0]),
   }),
   commands: {
     connect: () => link.connectDiscord(),
@@ -119,6 +126,10 @@ const panel = new ControlPanel({
     saveScale: (scale) => {
       indicatorStyle.endPreview();
       setIndicatorScale(scale);
+    },
+    setTokenBubble: (tokenId, bubbleId) => {
+      const tokenDocument = canvas.scene?.tokens.get(tokenId);
+      if (tokenDocument) setTokenBubbleId(tokenDocument, bubbleId);
     },
   },
 });
@@ -176,6 +187,11 @@ const onSpeakerFactsChange = () => {
 Hooks.on("updateActor", (_actor, change) => "ownership" in change && onSpeakerFactsChange());
 Hooks.on("updateUser", (_user, change) => "character" in change && onSpeakerFactsChange());
 Hooks.on("updateToken", (_token, change) => ("actorId" in change || hasModuleFlagChange(change)) && onSpeakerFactsChange());
+Hooks.on("updateToken", (tokenDocument, change) => hasTokenBubbleChange(change) && tokenDocument.object
+  && indicators.redrawToken(tokenDocument.object));
+
+// The bubble picker in the panel follows the selected token.
+Hooks.on("controlToken", () => panel.refresh());
 
 // The panel lists every player.
 Hooks.on("createUser", () => panel.refresh());

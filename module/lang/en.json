@@ -34,7 +34,10 @@
       "AddBubble": "Add an image to the bubbles",
       "RemoveBubble": "Remove {name} from the bubbles",
       "Size": "Size",
-      "Position": "Position"
+      "Position": "Position",
+      "TokenBubble": "Bubble of {token}",
+      "UseDefaultBubble": "The bubble for all tokens",
+      "SelectTokenForBubble": "Select a token to give it its own bubble."
     },
     "Preset": {
       "top": "Above",
