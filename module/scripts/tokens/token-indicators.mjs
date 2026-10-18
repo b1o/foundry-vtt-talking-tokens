@@ -61,6 +61,13 @@ export class TokenIndicators {
     this.syncToken(token);
   }
 
+  /** After a change of an actor's own bubble: its tokens on this scene, linked or not. */
+  redrawActorTokens(actorId) {
+    for (const token of canvas.tokens?.placeables ?? []) {
+      if (token.document.actorId === actorId) this.redrawToken(token);
+    }
+  }
+
   forgetToken(token) {
     this.#hide(token);
   }

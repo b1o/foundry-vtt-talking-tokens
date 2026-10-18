@@ -161,12 +161,15 @@ Open the panel. All settings under **Bubble settings** apply to every user at on
 - Click a bubble to use it on all tokens. The bubble in use has an orange frame.
 - Click **+** to add your own image (PNG, WebP, or SVG with a transparent background works best). Click the small
   **×** on an image to remove it from the list.
-- To give one token its own bubble, open the token's configuration (double-click the token, or right-click it and
-  click the gear). Click **Bubble** in the window header.
+- To give a character its own bubble, open its character sheet and click **Bubble** in the window header. Click a
+  bubble. The choice saves at once and applies to all tokens of that character, on every scene. Click **All tokens**
+  to undo this.
+- To give only one token its own bubble (for example one goblin of ten), open the token's configuration
+  (double-click the token, or right-click it and click the gear). Click **Bubble** in the window header.
 
   ![The Bubble button in the Token Configuration header](docs/images/token-config-bubble-button.png)
 
-  Click a bubble. The choice saves at once. Click **All tokens** to undo this.
+  Click a bubble. Click **Same as actor** to undo this.
 
   ![The bubble window of one token](docs/images/token-bubble-window.png)
 - Drag the **Size** slider. Visible bubbles change size while you drag.

@@ -205,14 +205,14 @@
   gap: 0.5rem;
 }
 
-/* The bubble window of one token: the first tile is "the bubble for all tokens", with a caption. */
-.talking-tokens .tt-bubble-default {
+/* The bubble window of a token or an actor: the first tile is "no own bubble", with a caption. */
+.talking-tokens .tt-bubble-inherited {
   flex-direction: column;
   width: 4.5rem;
   gap: 0.1rem;
 }
 
-.talking-tokens .tt-bubble-default img {
+.talking-tokens .tt-bubble-inherited img {
   max-height: 1.8rem;
 }
 

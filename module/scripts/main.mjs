@@ -17,14 +17,16 @@ import { IndicatorStyle } from "./tokens/indicator-style.mjs";
 import { PlacementMode } from "./tokens/placement-mode.mjs";
 import { addSpeakerButton } from "./tokens/speaker-hud-button.mjs";
 import { registerSpeakerHotkey } from "./tokens/speaker-hotkey.mjs";
-import { findSceneSpeakerTokenNames, hasModuleFlagChange, hasTokenBubbleChange } from "./tokens/token-flags.mjs";
+import { findSceneSpeakerTokenNames, hasBubbleChange, hasModuleFlagChange } from "./tokens/token-flags.mjs";
 import { TokenIndicators } from "./tokens/token-indicators.mjs";
 import { addControlButton, showStatusOnControlButton } from "./ui/control-button.mjs";
 import { ControlPanel } from "./ui/control-panel.mjs";
 import { copyDiagnostics } from "./ui/copy-diagnostics.mjs";
 import { buildPanelView } from "./ui/panel-view.mjs";
-import { TokenBubbleWindows } from "./ui/token-bubble-window.mjs";
-import { addBubbleHeaderButton, addBubbleHeaderControl } from "./ui/token-config-button.mjs";
+import { BubbleWindows } from "./ui/bubble-window.mjs";
+import {
+  addActorHeaderButton, addActorHeaderControl, addTokenHeaderButton, addTokenHeaderControl,
+} from "./ui/sheet-header-buttons.mjs";
 
 const timers = { setTimeout: (...args) => window.setTimeout(...args), clearTimeout: (id) => window.clearTimeout(id) };
 const isLocalhost = isLoopbackHostname(window.location.hostname);
@@ -83,10 +85,7 @@ const currentStatus = () => describeConnection(link.facts, {
 
 const showConnectionOnControls = (html) => showStatusOnControlButton(html, currentStatus());
 
-const bubbleWindows = new TokenBubbleWindows({
-  getLibrary: () => indicatorStyle.library,
-  getDefaultBubbleId,
-});
+const bubbleWindows = new BubbleWindows({ style: indicatorStyle });
 
 const linkUser = (userId, discordId) => updateUserMapping((mapping) => assignDiscordId(mapping, userId, discordId));
 
@@ -201,20 +200,28 @@ const onSpeakerFactsChange = () => {
 Hooks.on("updateActor", (_actor, change) => "ownership" in change && onSpeakerFactsChange());
 Hooks.on("updateUser", (_user, change) => "character" in change && onSpeakerFactsChange());
 Hooks.on("updateToken", (_token, change) => ("actorId" in change || hasModuleFlagChange(change)) && onSpeakerFactsChange());
+// The own bubble of a token or of an actor (all tokens of the actor) changed.
 Hooks.on("updateToken", (tokenDocument, change) => {
-  if (!hasTokenBubbleChange(change)) return;
+  if (!hasBubbleChange(change)) return;
   if (tokenDocument.object) indicators.redrawToken(tokenDocument.object);
-  bubbleWindows.refreshToken(tokenDocument);
+  bubbleWindows.refreshAll();
 });
-Hooks.on("deleteToken", (tokenDocument) => bubbleWindows.closeToken(tokenDocument));
+Hooks.on("updateActor", (actor, change) => {
+  if (!hasBubbleChange(change)) return;
+  indicators.redrawActorTokens(actor.id);
+  bubbleWindows.refreshAll();
+});
+Hooks.on("deleteToken", (tokenDocument) => bubbleWindows.closeFor(tokenDocument));
+Hooks.on("deleteActor", (actor) => bubbleWindows.closeFor(actor));
 
-// The "Bubble" button in the Token Config header: v11 (Application V1) and v13 (ApplicationV2).
-Hooks.on("getTokenConfigHeaderButtons", (sheet, buttons) => {
-  addBubbleHeaderButton(sheet, buttons, (tokenDocument) => bubbleWindows.open(tokenDocument));
-});
-Hooks.on("getHeaderControlsTokenConfig", (sheet, controls) => {
-  addBubbleHeaderControl(sheet, controls, (tokenDocument) => bubbleWindows.open(tokenDocument));
-});
+// The "Bubble" button in the headers of the Token Config and the actor sheet: v11 (Application V1) and v13
+// (ApplicationV2).
+const openTokenBubble = (tokenDocument) => bubbleWindows.openForToken(tokenDocument);
+const openActorBubble = (actor) => bubbleWindows.openForActor(actor);
+Hooks.on("getTokenConfigHeaderButtons", (sheet, buttons) => addTokenHeaderButton(sheet, buttons, openTokenBubble));
+Hooks.on("getHeaderControlsTokenConfig", (sheet, controls) => addTokenHeaderControl(sheet, controls, openTokenBubble));
+Hooks.on("getActorSheetHeaderButtons", (sheet, buttons) => addActorHeaderButton(sheet, buttons, openActorBubble));
+Hooks.on("getHeaderControlsActorSheetV2", (sheet, controls) => addActorHeaderControl(sheet, controls, openActorBubble));
 
 // The panel lists every player.
 Hooks.on("createUser", () => panel.refresh());

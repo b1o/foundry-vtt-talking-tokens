@@ -31,15 +31,19 @@ export function buildLibrary(customBubbles) {
 }
 
 /**
- * Applied on every read, so a token or a default that points to a removed image still gets a bubble.
+ * The first candidate that is in the library, else the classic bubble. Applied on every read, so a token, an actor,
+ * or a default that points to a removed image still gets a bubble.
  * @param {Bubble[]} library
- * @param {string|null} tokenBubbleId  The bubble of one token, or null for the world default.
- * @param {string} defaultBubbleId
- * @returns {string} The image path.
+ * @param {(string|null)[]} candidateIds  In the order of use, for example [token, actor, world default].
+ * @returns {Bubble}
  */
-export function resolveBubblePath(library, tokenBubbleId, defaultBubbleId) {
+export function resolveBubble(library, candidateIds) {
   const find = (id) => library.find((bubble) => bubble.id === id);
-  return (find(tokenBubbleId) ?? find(defaultBubbleId) ?? find(FALLBACK_BUBBLE_ID)).path;
+  for (const id of candidateIds) {
+    const bubble = id && find(id);
+    if (bubble) return bubble;
+  }
+  return find(FALLBACK_BUBBLE_ID);
 }
 
 /** @returns {CustomBubble[]} The list with the image added, or the same list if the image is in it already. */

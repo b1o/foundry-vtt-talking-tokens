@@ -32,7 +32,7 @@
       "SetupNeedsNewBridge": "This bridge does not match the module version. Download the new bridge, close the old bridge window, and start the new one.",
       "SetupNeedsLocalhost": "The bot setup works only when Foundry is open on this computer through localhost.",
       "BubbleSettings": "Bubble settings",
-      "PickDefaultBubble": "Click a bubble to use it on all tokens. Add your own images with +. To give one token its own bubble, open its Token Configuration and click Bubble in the header.",
+      "PickDefaultBubble": "Click a bubble to use it on all tokens. Add your own images with +. To give an actor or one token its own bubble, click Bubble in the header of its character sheet or Token Configuration.",
       "AddBubble": "Add an image to the bubbles",
       "RemoveBubble": "Remove {name} from the bubbles",
       "Size": "Size",
@@ -107,11 +107,13 @@
         "Hint": "Turn off to hide all speech bubbles on this computer only."
       }
     },
-    "TokenBubble": {
+    "BubbleWindow": {
       "Button": "Bubble",
-      "Title": "Bubble: {token}",
-      "Hint": "The bubble that shows on this token while its speaker talks. A click saves at once.",
-      "UseDefault": "The bubble for all tokens",
+      "TokenTitle": "Bubble of this token: {name}",
+      "ActorTitle": "Bubble of {name}",
+      "TokenHint": "The bubble of this one token. Without a choice, it uses the bubble of its actor. A click saves at once.",
+      "ActorHint": "The bubble of all tokens of this actor, on every scene. One token can still choose its own bubble in its Token Configuration. A click saves at once.",
+      "SameAsActor": "Same as actor",
       "AllTokens": "All tokens",
       "LibraryHint": "Add or remove images in the Talking Tokens panel, under Bubble settings."
     },

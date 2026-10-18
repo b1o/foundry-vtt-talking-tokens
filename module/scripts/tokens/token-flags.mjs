@@ -1,7 +1,7 @@
 import { MODULE_ID } from "../module-id.mjs";
 import { findSpeakerTokenIds, planMark, planMarkToggle } from "./speaker-rule.mjs";
 
-/** All reads and writes of the token flags of this module go through this file. */
+/** All reads and writes of the flags of this module (on tokens, and the bubble on actors) go through this file. */
 const FLAG = Object.freeze({
   SPEAKER_USER_ID: "speakerUserId",
   BUBBLE_ID: "bubbleId",
@@ -17,19 +17,44 @@ export function getSpeakerUserId(tokenDocument) {
   return tokenDocument.getFlag(MODULE_ID, FLAG.SPEAKER_USER_ID) ?? null;
 }
 
-/** @returns {string|null} The library id of this token's own bubble, or null for the world default. */
-export function getTokenBubbleId(tokenDocument) {
-  return tokenDocument.getFlag(MODULE_ID, FLAG.BUBBLE_ID) ?? null;
+/**
+ * A token and an actor can each have their own bubble, with the same flag. The order of use is in
+ * IndicatorStyle#bubblePathFor: the token, then its actor, then the world default.
+ * @param {TokenDocument|Actor} document
+ * @returns {string|null} The library id of the document's own bubble, or null if it has none.
+ */
+export function getOwnBubbleId(document) {
+  return document.getFlag(MODULE_ID, FLAG.BUBBLE_ID) ?? null;
 }
 
-/** @param {string|null} bubbleId  null: the token uses the world default again. */
-export function setTokenBubbleId(tokenDocument, bubbleId) {
-  if (bubbleId) return tokenDocument.setFlag(MODULE_ID, FLAG.BUBBLE_ID, bubbleId);
-  return tokenDocument.unsetFlag(MODULE_ID, FLAG.BUBBLE_ID);
+/**
+ * @param {TokenDocument|Actor} document
+ * @param {string|null} bubbleId  null: the document uses the next bubble in the order again.
+ */
+export function setOwnBubbleId(document, bubbleId) {
+  if (bubbleId) return document.setFlag(MODULE_ID, FLAG.BUBBLE_ID, bubbleId);
+  return document.unsetFlag(MODULE_ID, FLAG.BUBBLE_ID);
 }
 
-/** @returns {boolean} Did a token update change the token's own bubble? */
-export function hasTokenBubbleChange(change) {
+/**
+ * The actor that holds the bubble of a token: the world Actor, also for an unlinked token, so all tokens of an actor
+ * share it (TokenDocument#baseActor, client/data/documents/token.js:43).
+ * @returns {Actor|null}
+ */
+export function getBubbleActorOfToken(tokenDocument) {
+  return tokenDocument.baseActor ?? null;
+}
+
+/**
+ * The same actor, seen from an actor sheet: the sheet of an unlinked token shows a synthetic actor.
+ * @returns {Actor|null}
+ */
+export function getBubbleActorOfSheet(actor) {
+  return actor.isToken ? (actor.token?.baseActor ?? null) : actor;
+}
+
+/** @returns {boolean} Did a token or actor update change the document's own bubble? */
+export function hasBubbleChange(change) {
   const flags = change.flags?.[MODULE_ID] ?? {};
   return FLAG.BUBBLE_ID in flags || `-=${FLAG.BUBBLE_ID}` in flags;
 }
