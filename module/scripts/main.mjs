@@ -1,6 +1,7 @@
 import { BridgeClient } from "./bridge/bridge-client.mjs";
 import { BridgeLink } from "./bridge/bridge-link.mjs";
 import { describeConnection, isLoopbackHostname } from "./bridge/connection-status.mjs";
+import { StatusHistory } from "./bridge/status-history.mjs";
 import { assignDiscordId } from "./mapping/user-mapping.mjs";
 import { bridgeUrl } from "./protocol.mjs";
 import {
@@ -21,6 +22,7 @@ import {
 import { TokenIndicators } from "./tokens/token-indicators.mjs";
 import { addControlButton, showStatusOnControlButton } from "./ui/control-button.mjs";
 import { ControlPanel } from "./ui/control-panel.mjs";
+import { copyDiagnostics } from "./ui/copy-diagnostics.mjs";
 import { buildPanelView } from "./ui/panel-view.mjs";
 
 const timers = { setTimeout: (...args) => window.setTimeout(...args), clearTimeout: (id) => window.clearTimeout(id) };
@@ -47,6 +49,8 @@ const relay = new SpeakingRelay({
   timers,
 });
 
+const statusHistory = new StatusHistory({ now: () => new Date() });
+
 const link = new BridgeLink({
   createClient: (events) => new BridgeClient({
     url: bridgeUrl(),
@@ -57,6 +61,7 @@ const link = new BridgeLink({
   isAutoConnectOn,
   events: {
     onChange: () => {
+      statusHistory.record(describeConnection(link.facts, isLocalhost));
       panel.refresh();
       if (ui.controls?.element) showConnectionOnControls(ui.controls.element);
     },
@@ -130,6 +135,10 @@ const panel = new ControlPanel({
       setIndicatorScale(scale);
     },
     testUser: (userId) => relay.startTest(userId),
+    copyDiagnostics: () => copyDiagnostics({
+      facts: link.facts, status: describeConnection(link.facts, isLocalhost), history: statusHistory.entries,
+      mapping: getUserMapping(),
+    }),
     setTokenBubble: (tokenId, bubbleId) => {
       const tokenDocument = canvas.scene?.tokens.get(tokenId);
       if (tokenDocument) setTokenBubbleId(tokenDocument, bubbleId);

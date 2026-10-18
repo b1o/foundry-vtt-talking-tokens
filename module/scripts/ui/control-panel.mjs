@@ -15,6 +15,7 @@ const PANEL_ACTION = Object.freeze({
   ADD_BUBBLE: "add-bubble",
   REMOVE_BUBBLE: "remove-bubble",
   TEST_USER: "test-user",
+  COPY_DIAGNOSTICS: "copy-diagnostics",
 });
 
 /**
@@ -36,6 +37,7 @@ const PANEL_ACTION = Object.freeze({
  * @property {(scale: number) => void} saveScale
  * @property {(tokenId: string, bubbleId: string|null) => void} setTokenBubble  null: use the world default.
  * @property {(userId: string) => void} testUser  Show the user as speaking for a few seconds.
+ * @property {() => void} copyDiagnostics
  */
 
 /**
@@ -162,6 +164,7 @@ export class ControlPanel extends getApplicationClass() {
       case PANEL_ACTION.ADD_BUBBLE: return this.#browseBubble();
       case PANEL_ACTION.REMOVE_BUBBLE: return this.#commands.removeBubble(bubbleId);
       case PANEL_ACTION.TEST_USER: return this.#commands.testUser(userId);
+      case PANEL_ACTION.COPY_DIAGNOSTICS: return this.#commands.copyDiagnostics();
     }
   }
 

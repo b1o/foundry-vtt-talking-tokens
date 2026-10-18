@@ -16,9 +16,14 @@
   <details class="tt-setup" {{#if isSetupOpen}}open{{/if}}>
     <summary>{{localize "TALKING_TOKENS.Panel.Setup"}}</summary>
 
-    <button type="button" data-action="open-guide" data-url="{{setupGuideUrl}}">
-      <i class="fas fa-book-open" aria-hidden="true"></i> {{localize "TALKING_TOKENS.Panel.OpenGuide"}}
-    </button>
+    <div class="tt-row">
+      <button type="button" data-action="open-guide" data-url="{{setupGuideUrl}}">
+        <i class="fas fa-book-open" aria-hidden="true"></i> {{localize "TALKING_TOKENS.Panel.OpenGuide"}}
+      </button>
+      <button type="button" data-action="copy-diagnostics">
+        <i class="fas fa-clipboard" aria-hidden="true"></i> {{localize "TALKING_TOKENS.Panel.CopyDiagnostics"}}
+      </button>
+    </div>
 
     {{#if noBridgeTextKey}}
       <p class="tt-hint">{{localize noBridgeTextKey}}</p>

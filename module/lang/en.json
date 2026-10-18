@@ -25,6 +25,7 @@
       "NotLinked": "— Not linked —",
       "LinkedNotInVoice": "Linked (not in voice now)",
       "OpenGuide": "Setup guide",
+      "CopyDiagnostics": "Copy diagnostics",
       "SetupNeedsBridge": "Start the bridge first: double-click talking-tokens-bridge.exe on this computer. The bot setup then shows here.",
       "SetupNeedsNewBridge": "This bridge does not match the module version. Download the new bridge, close the old bridge window, and start the new one.",
       "SetupNeedsLocalhost": "The bot setup works only when Foundry is open on this computer through localhost.",
@@ -90,7 +91,9 @@
     },
     "Notifications": {
       "ImageFailed": "The image {path} could not be loaded. The classic bubble shows instead.",
-      "MarkFailed": "The speaking token could not be changed."
+      "MarkFailed": "The speaking token could not be changed.",
+      "DiagnosticsCopied": "The diagnostics are on the clipboard. Paste them into your bug report.",
+      "DiagnosticsFailed": "The diagnostics could not be copied to the clipboard."
     },
     "Settings": {
       "holdTimeMs": {
