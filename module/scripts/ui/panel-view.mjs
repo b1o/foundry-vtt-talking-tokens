@@ -1,9 +1,17 @@
 import { PANEL_STATE } from "../bridge/connection-status.mjs";
-import { SETUP_GUIDE_URL } from "../links.mjs";
+import { BRIDGE_DOWNLOAD_URL, SETUP_GUIDE_URL } from "../links.mjs";
 import { ANCHOR_PRESETS } from "../tokens/indicator-layout.mjs";
 
 /** In these states the setup section opens by itself, because the GM must act there. */
 const SETUP_STATES = new Set([PANEL_STATE.NO_TOKEN, PANEL_STATE.TOKEN_REJECTED, PANEL_STATE.NO_GM]);
+
+/** In these states no usable bridge is connected, so the bot setup cannot work: it says why instead. */
+const NO_BRIDGE_TEXT = {
+  [PANEL_STATE.NOT_LOCALHOST]: "TALKING_TOKENS.Panel.SetupNeedsLocalhost",
+  [PANEL_STATE.CONNECTING]: "TALKING_TOKENS.Panel.SetupNeedsBridge",
+  [PANEL_STATE.BRIDGE_NOT_FOUND]: "TALKING_TOKENS.Panel.SetupNeedsBridge",
+  [PANEL_STATE.INCOMPATIBLE]: "TALKING_TOKENS.Panel.SetupNeedsNewBridge",
+};
 
 /** Only these states have a Discord session, so only they can list voice members. */
 const DISCORD_STATES = new Set([
@@ -38,7 +46,10 @@ export function buildPanelView(input) {
       actionKey: status.action ? `TALKING_TOKENS.Action.${status.action}` : null,
     },
     isSetupOpen: SETUP_STATES.has(status.state),
-    canSetToken: status.state !== PANEL_STATE.NOT_LOCALHOST && status.state !== PANEL_STATE.BRIDGE_NOT_FOUND,
+    canSetToken: !NO_BRIDGE_TEXT[status.state],
+    noBridgeTextKey: NO_BRIDGE_TEXT[status.state] ?? null,
+    canDownloadBridge: status.state !== PANEL_STATE.NOT_LOCALHOST,
+    bridgeDownloadUrl: BRIDGE_DOWNLOAD_URL,
     tokenResultKey: tokenResultKey(tokenResult),
     inviteUrl: status.inviteUrl,
     setupGuideUrl: SETUP_GUIDE_URL,

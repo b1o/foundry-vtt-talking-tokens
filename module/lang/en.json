@@ -26,7 +26,10 @@
       "NotLinked": "— Not linked —",
       "LinkedNotInVoice": "Linked (not in voice now)",
       "NoPlayers": "This world has no players yet.",
-      "OpenGuide": "Setup guide"
+      "OpenGuide": "Setup guide",
+      "SetupNeedsBridge": "Start the bridge first: double-click talking-tokens-bridge.exe on this computer. The bot setup then shows here.",
+      "SetupNeedsNewBridge": "This bridge does not match the module version. Download the new bridge, close the old bridge window, and start the new one.",
+      "SetupNeedsLocalhost": "The bot setup works only when Foundry is open on this computer through localhost."
     },
     "Preset": {
       "top": "Above",
