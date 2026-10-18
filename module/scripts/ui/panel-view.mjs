@@ -25,6 +25,7 @@ const DISCORD_STATES = new Set([
  * @property {import("../bridge/connection-status.mjs").ConnectionStatus} status
  * @property {import("../protocol.mjs").VoiceMember[]} voiceMembers
  * @property {{id: string, name: string, isGM: boolean, speakerTokenNames: string[]}[]} users
+ * @property {string} currentUserId
  * @property {import("../mapping/user-mapping.mjs").UserMapping} mapping
  * @property {string[]} speakingUserIds
  * @property {{accepted: boolean, error: string|null}|null} tokenResult  The reply to the last token that the GM sent.
@@ -42,7 +43,7 @@ const DISCORD_STATES = new Set([
 export function buildPanelView(input) {
   const {
     status, voiceMembers, users, mapping, speakingUserIds, tokenResult, placement, isAutoConnectOn, bubbles,
-    selectedToken,
+    selectedToken, currentUserId,
   } = input;
   const speaking = new Set(speakingUserIds);
   const hasDiscord = DISCORD_STATES.has(status.state);
@@ -73,9 +74,11 @@ export function buildPanelView(input) {
     },
     scaleRange: bubbles.scaleRange,
     presets: Object.keys(ANCHOR_PRESETS).map((name) => ({ name, labelKey: `TALKING_TOKENS.Preset.${name}` })),
-    players: users.filter((user) => !user.isGM).map((user) => ({
+    // The GM's own row: the GM's voice shows on a marked NPC, and the Test button checks that.
+    players: users.filter((user) => !user.isGM || user.id === currentUserId).map((user) => ({
       id: user.id,
       name: user.name,
+      isYou: user.id === currentUserId,
       isSpeaking: speaking.has(user.id),
       speakerTokenNames: user.speakerTokenNames.join(", "),
       options: memberOptions(voiceMembers, mapping[user.id] ?? null),

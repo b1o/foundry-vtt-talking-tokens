@@ -14,6 +14,7 @@ const PANEL_ACTION = Object.freeze({
   PICK_DEFAULT_BUBBLE: "pick-default-bubble",
   ADD_BUBBLE: "add-bubble",
   REMOVE_BUBBLE: "remove-bubble",
+  TEST_USER: "test-user",
 });
 
 /**
@@ -34,6 +35,7 @@ const PANEL_ACTION = Object.freeze({
  * @property {(scale: number) => void} previewScale  While the GM drags the size slider.
  * @property {(scale: number) => void} saveScale
  * @property {(tokenId: string, bubbleId: string|null) => void} setTokenBubble  null: use the world default.
+ * @property {(userId: string) => void} testUser  Show the user as speaking for a few seconds.
  */
 
 /**
@@ -139,7 +141,7 @@ export class ControlPanel extends getApplicationClass() {
     slider.addEventListener("change", () => this.#commands.saveScale(Number(slider.value)));
   }
 
-  #onAction(event, { action, discordId, url, preset, bubbleId }) {
+  #onAction(event, { action, discordId, url, preset, bubbleId, userId }) {
     event.preventDefault();
     switch (action) {
       case ACTION.CONNECT: return this.#commands.connect();
@@ -159,6 +161,7 @@ export class ControlPanel extends getApplicationClass() {
       case PANEL_ACTION.PICK_DEFAULT_BUBBLE: return this.#commands.setDefaultBubble(bubbleId);
       case PANEL_ACTION.ADD_BUBBLE: return this.#browseBubble();
       case PANEL_ACTION.REMOVE_BUBBLE: return this.#commands.removeBubble(bubbleId);
+      case PANEL_ACTION.TEST_USER: return this.#commands.testUser(userId);
     }
   }
 

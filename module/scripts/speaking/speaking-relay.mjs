@@ -4,6 +4,9 @@ import { log } from "../output.mjs";
 
 const SPEAKING_USERS = "speaking-users";
 
+/** How long the Test button of the panel shows a user as speaking. */
+const TEST_DURATION_MS = 3_000;
+
 const isSpeakingUsersMessage = (data) => data?.type === SPEAKING_USERS && Array.isArray(data.userIds)
   && data.userIds.every((id) => typeof id === "string");
 
@@ -18,7 +21,10 @@ export class SpeakingRelay {
   #getActiveGmId;
   #getUserMapping;
   #onSpeakingUsers;
+  #timers;
   #speakingDiscordIds = new Set();
+  /** Users that the GM tests with the panel; they show as speaking on every client, as if they spoke. */
+  #testUserIds = new Set();
   #lastUserIds = [];
   /**
    * Only a client that gets data from the bridge may publish. On any other client an empty list would be a lie,
@@ -29,14 +35,15 @@ export class SpeakingRelay {
   /**
    * @param {{socket: {emit: Function, on: Function}, isActiveGm: () => boolean, getActiveGmId: () => string|null,
    *   getUserMapping: () => import("../mapping/user-mapping.mjs").UserMapping,
-   *   onSpeakingUsers: (userIds: string[]) => void}} options
+   *   onSpeakingUsers: (userIds: string[]) => void, timers: import("../bridge/bridge-client.mjs").Timers}} options
    */
-  constructor({ socket, isActiveGm, getActiveGmId, getUserMapping, onSpeakingUsers }) {
+  constructor({ socket, isActiveGm, getActiveGmId, getUserMapping, onSpeakingUsers, timers }) {
     this.#socket = socket;
     this.#isActiveGm = isActiveGm;
     this.#getActiveGmId = getActiveGmId;
     this.#getUserMapping = getUserMapping;
     this.#onSpeakingUsers = onSpeakingUsers;
+    this.#timers = timers;
   }
 
   /** Receive the lists that the active GM sends. Foundry does not echo a message back to its sender. */
@@ -64,6 +71,20 @@ export class SpeakingRelay {
     this.#publish();
   }
 
+  /**
+   * Show the user as speaking for a few seconds, through the same path as real speech. Other clients see it only if
+   * this client is the active GM, because the clients accept lists only from the active GM.
+   */
+  startTest(userId) {
+    if (this.#testUserIds.has(userId)) return;
+    this.#testUserIds.add(userId);
+    this.#publish();
+    this.#timers.setTimeout(() => {
+      this.#testUserIds.delete(userId);
+      this.#publish();
+    }, TEST_DURATION_MS);
+  }
+
   /** Send the list again, for example after a mapping change or when a player joins. */
   republish() {
     if (this.#hasBridgeData) this.#send(this.#currentUserIds());
@@ -76,7 +97,8 @@ export class SpeakingRelay {
   }
 
   #currentUserIds() {
-    return toUserIds(this.#getUserMapping(), this.#speakingDiscordIds);
+    const speaking = new Set([...toUserIds(this.#getUserMapping(), this.#speakingDiscordIds), ...this.#testUserIds]);
+    return [...speaking].sort();
   }
 
   #send(userIds) {

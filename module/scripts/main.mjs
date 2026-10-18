@@ -44,6 +44,7 @@ const relay = new SpeakingRelay({
   getActiveGmId: () => game.users.activeGM?.id ?? null,
   getUserMapping,
   onSpeakingUsers: (userIds) => speakingState.setSpeakingUsers(userIds),
+  timers,
 });
 
 const link = new BridgeLink({
@@ -95,6 +96,7 @@ const panel = new ControlPanel({
       scaleRange: SCALE_RANGE,
     },
     selectedToken: describeSelectedToken(canvas.tokens?.controlled[0]),
+    currentUserId: game.user.id,
   }),
   commands: {
     connect: () => link.connectDiscord(),
@@ -127,6 +129,7 @@ const panel = new ControlPanel({
       indicatorStyle.endPreview();
       setIndicatorScale(scale);
     },
+    testUser: (userId) => relay.startTest(userId),
     setTokenBubble: (tokenId, bubbleId) => {
       const tokenDocument = canvas.scene?.tokens.get(tokenId);
       if (tokenDocument) setTokenBubbleId(tokenDocument, bubbleId);

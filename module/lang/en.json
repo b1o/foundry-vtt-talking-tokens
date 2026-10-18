@@ -24,7 +24,6 @@
       "NoSpeakerToken": "no speaking token in this scene",
       "NotLinked": "— Not linked —",
       "LinkedNotInVoice": "Linked (not in voice now)",
-      "NoPlayers": "This world has no players yet.",
       "OpenGuide": "Setup guide",
       "SetupNeedsBridge": "Start the bridge first: double-click talking-tokens-bridge.exe on this computer. The bot setup then shows here.",
       "SetupNeedsNewBridge": "This bridge does not match the module version. Download the new bridge, close the old bridge window, and start the new one.",
@@ -37,7 +36,9 @@
       "Position": "Position",
       "TokenBubble": "Bubble of {token}",
       "UseDefaultBubble": "The bubble for all tokens",
-      "SelectTokenForBubble": "Select a token to give it its own bubble."
+      "SelectTokenForBubble": "Select a token to give it its own bubble.",
+      "You": "(you)",
+      "Test": "Show a test bubble for {name} for 3 seconds"
     },
     "Preset": {
       "top": "Above",

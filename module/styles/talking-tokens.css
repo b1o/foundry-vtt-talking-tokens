@@ -62,7 +62,7 @@
 
 .talking-tokens .tt-person {
   display: grid;
-  grid-template-columns: auto 8rem 1fr;
+  grid-template-columns: auto 8rem 1fr 2rem;
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 0.25rem;
@@ -210,4 +210,14 @@
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 0.25rem;
+}
+
+.talking-tokens .tt-test {
+  width: 2rem;
+  margin: 0;
+  padding: 0;
+}
+
+.talking-tokens .tt-test > i {
+  margin: 0;
 }

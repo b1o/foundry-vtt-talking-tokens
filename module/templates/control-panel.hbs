@@ -129,7 +129,7 @@
         <span class="tt-speaking-dot {{#if isSpeaking}}is-speaking{{/if}}" data-speaking-user="{{id}}"
               title="{{localize 'TALKING_TOKENS.Panel.Speaking'}}"></span>
         <label for="tt-link-{{id}}">
-          {{name}}
+          {{name}}{{#if isYou}} {{localize "TALKING_TOKENS.Panel.You"}}{{/if}}
           <small class="tt-speaker-token">
             {{#if speakerTokenNames}}{{speakerTokenNames}}{{else}}{{localize "TALKING_TOKENS.Panel.NoSpeakerToken"}}{{/if}}
           </small>
@@ -142,9 +142,11 @@
             </option>
           {{/each}}
         </select>
+        <button type="button" class="tt-test" data-action="test-user" data-user-id="{{id}}"
+                aria-label="{{localize 'TALKING_TOKENS.Panel.Test' name=name}}" title="{{localize 'TALKING_TOKENS.Panel.Test' name=name}}">
+          <i class="fas fa-play" aria-hidden="true"></i>
+        </button>
       </div>
-    {{else}}
-      <p class="tt-hint">{{localize "TALKING_TOKENS.Panel.NoPlayers"}}</p>
     {{/each}}
   </section>
 </div>
