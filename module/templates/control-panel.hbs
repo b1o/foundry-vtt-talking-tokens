@@ -1,21 +1,21 @@
 <div class="tt-panel">
-  <section class="tt-status tt-tone-{{status.tone}}" aria-live="polite">
-    <span class="tt-status-dot" aria-hidden="true"></span>
-    <p class="tt-status-text">
-      {{localize status.textKey channel=status.textData.channel bridge=status.textData.bridge module=status.textData.module}}
-    </p>
+  <section class="tt-section tt-status tt-tone-{{status.tone}}" aria-live="polite">
+    <div class="tt-status-line">
+      <span class="tt-status-dot" aria-hidden="true"></span>
+      <p class="tt-status-text">
+        {{localize status.textKey channel=status.textData.channel bridge=status.textData.bridge module=status.textData.module}}
+      </p>
+    </div>
     {{#if voiceSummary}}
-      <p class="tt-hint tt-voice-summary">
+      <p class="tt-hint">
         {{localize "TALKING_TOKENS.Panel.VoiceSummary" linked=voiceSummary.linkedCount total=voiceSummary.memberCount}}
         {{#if voiceSummary.unlinkedNames}}
           {{localize "TALKING_TOKENS.Panel.NotLinkedNames" names=voiceSummary.unlinkedNames}}
         {{/if}}
       </p>
     {{/if}}
-    {{#if status.actionKey}}
-      <button type="button" data-action="{{status.action}}" data-url="{{status.actionUrl}}">
-        {{localize status.actionKey}}
-      </button>
+    {{#if status.sessionActionKey}}
+      <button type="button" data-action="{{status.sessionAction}}">{{localize status.sessionActionKey}}</button>
     {{/if}}
     <label class="tt-checkbox">
       <input type="checkbox" name="autoConnect" {{#if isAutoConnectOn}}checked{{/if}}>
@@ -23,102 +23,84 @@
     </label>
   </section>
 
-  <details class="tt-setup" {{#if isSetupOpen}}open{{/if}}>
-    <summary>{{localize "TALKING_TOKENS.Panel.Setup"}}</summary>
-
-    <div class="tt-row">
-      <button type="button" data-action="open-guide" data-url="{{setupGuideUrl}}">
-        <i class="fas fa-book-open" aria-hidden="true"></i> {{localize "TALKING_TOKENS.Panel.OpenGuide"}}
-      </button>
-      <button type="button" data-action="copy-diagnostics">
-        <i class="fas fa-clipboard" aria-hidden="true"></i> {{localize "TALKING_TOKENS.Panel.CopyDiagnostics"}}
-      </button>
-    </div>
-
-    {{#if noBridgeTextKey}}
-      <p class="tt-hint">{{localize noBridgeTextKey}}</p>
-      {{#if canDownloadBridge}}
-        <button type="button" data-action="download-bridge" data-url="{{bridgeDownloadUrl}}">
-          <i class="fas fa-download" aria-hidden="true"></i> {{localize "TALKING_TOKENS.Action.download-bridge"}}
-        </button>
-      {{/if}}
-    {{/if}}
-
-    {{#if canSetToken}}
-      <label class="tt-field">
-        <span>{{localize "TALKING_TOKENS.Panel.Token"}}</span>
-        <input type="password" name="token" value="{{typedToken}}" autocomplete="off"
-               placeholder="{{localize 'TALKING_TOKENS.Panel.TokenPlaceholder'}}">
-      </label>
-      <button type="button" data-action="save-token">{{localize "TALKING_TOKENS.Panel.SaveToken"}}</button>
-      {{#if tokenResultKey}}<p class="tt-hint">{{localize tokenResultKey}}</p>{{/if}}
-    {{/if}}
-
-    {{#if inviteUrl}}
-      <button type="button" data-action="invite" data-url="{{inviteUrl}}">
-        {{localize "TALKING_TOKENS.Action.invite"}}
-      </button>
-    {{/if}}
-
-    {{#if hasDiscord}}
-      <h3>{{localize "TALKING_TOKENS.Panel.WhoAreYou"}}</h3>
-      {{#each gmCandidates}}
-        <button type="button" class="tt-member" data-action="pick-gm" data-discord-id="{{id}}">
-          <img src="{{avatarUrl}}" alt="" width="24" height="24"> {{name}} <small>#{{channelName}}</small>
-        </button>
-      {{else}}
-        <p class="tt-hint">{{localize "TALKING_TOKENS.Panel.JoinVoiceFirst"}}</p>
-      {{/each}}
-    {{/if}}
-  </details>
-
-  <section class="tt-appearance">
-    <h3>{{localize "TALKING_TOKENS.Panel.BubbleSettings"}}</h3>
-    <p class="tt-hint">{{localize "TALKING_TOKENS.Panel.PickDefaultBubble"}}</p>
-    <div class="tt-bubbles">
-      {{#each bubbles}}
-        <div class="tt-bubble-item">
-          {{> "modules/talking-tokens/templates/bubble-tile.hbs" action="pick-default-bubble"}}
-          {{#if canRemove}}
-            <button type="button" class="tt-bubble-remove" data-action="remove-bubble" data-bubble-id="{{id}}"
-                    aria-label="{{localize 'TALKING_TOKENS.Panel.RemoveBubble' name=label}}"
-                    title="{{localize 'TALKING_TOKENS.Panel.RemoveBubble' name=label}}">
-              <i class="fas fa-times" aria-hidden="true"></i>
+  <details class="tt-section tt-setup" data-section="setup" {{#if isSetupOpen}}open{{/if}}>
+    <summary><h3>{{localize "TALKING_TOKENS.Panel.Setup"}}</h3></summary>
+    <div class="tt-section-body">
+      {{#if setup.step}}
+        <div class="tt-step">
+          <p>{{localize setup.step.textKey}}</p>
+          {{#if setup.step.link}}
+            <button type="button" data-action="open-link" data-url="{{setup.step.link.url}}">
+              <i class="fas {{setup.step.link.icon}}" aria-hidden="true"></i> {{localize setup.step.link.labelKey}}
             </button>
           {{/if}}
         </div>
-      {{/each}}
-      <button type="button" class="tt-bubble tt-bubble-add" data-action="add-bubble"
-              aria-label="{{localize 'TALKING_TOKENS.Panel.AddBubble'}}" title="{{localize 'TALKING_TOKENS.Panel.AddBubble'}}">
-        <i class="fas fa-plus" aria-hidden="true"></i>
-      </button>
-    </div>
+      {{/if}}
 
-    <label class="tt-size">
-      <span>{{localize "TALKING_TOKENS.Panel.Size"}}</span>
-      <input type="range" name="scale" min="{{scaleRange.min}}" max="{{scaleRange.max}}" step="{{scaleRange.step}}"
-             value="{{scale}}">
-      <output name="scaleValue">{{scale}}</output>
-    </label>
+      {{#*inline "tokenField"}}
+        <div class="tt-group">
+          <label class="tt-field">
+            <span>{{localize "TALKING_TOKENS.Panel.Token"}}</span>
+            <input type="password" name="token" value="{{typedToken}}" autocomplete="off"
+                   placeholder="{{localize 'TALKING_TOKENS.Panel.TokenPlaceholder'}}">
+          </label>
+          <button type="button" data-action="save-token">{{localize "TALKING_TOKENS.Panel.SaveToken"}}</button>
+          {{#if setup.tokenResultKey}}<p class="tt-hint">{{localize setup.tokenResultKey}}</p>{{/if}}
+        </div>
+      {{/inline}}
+      {{#*inline "gmList"}}
+        <div class="tt-group">
+          <h4>{{localize "TALKING_TOKENS.Panel.WhoAreYou"}}</h4>
+          {{#each setup.gmCandidates}}
+            <button type="button" class="tt-member" data-action="pick-gm" data-discord-id="{{id}}">
+              <img src="{{avatarUrl}}" alt="" width="24" height="24"> {{name}} <small>#{{channelName}}</small>
+            </button>
+          {{else}}
+            <p class="tt-hint">{{localize "TALKING_TOKENS.Panel.JoinVoiceFirst"}}</p>
+          {{/each}}
+        </div>
+      {{/inline}}
 
-    <h4>{{localize "TALKING_TOKENS.Panel.Position"}}</h4>
-    {{#if placement.isActive}}
-      <p class="tt-hint">{{localize "TALKING_TOKENS.Panel.PlacementActive" token=placement.tokenName}}</p>
+      {{#if setup.canSetToken}}
+        {{#if setup.isTokenStep}}
+          {{> tokenField}}
+        {{else}}
+          <details class="tt-sub" data-section="token" {{#if isTokenOpen}}open{{/if}}>
+            <summary>{{localize "TALKING_TOKENS.Panel.ReplaceToken"}}</summary>
+            {{> tokenField}}
+          </details>
+        {{/if}}
+      {{/if}}
+
+      {{#if setup.inviteUrl}}
+        <button type="button" data-action="open-link" data-url="{{setup.inviteUrl}}">
+          <i class="fab fa-discord" aria-hidden="true"></i> {{localize "TALKING_TOKENS.Panel.InviteBot"}}
+        </button>
+      {{/if}}
+
+      {{#if setup.hasDiscord}}
+        {{#if setup.isGmStep}}
+          {{> gmList}}
+        {{else}}
+          <details class="tt-sub" data-section="gm" {{#if isGmOpen}}open{{/if}}>
+            <summary>{{localize "TALKING_TOKENS.Panel.ChangeGm"}}</summary>
+            {{> gmList}}
+          </details>
+        {{/if}}
+      {{/if}}
+
       <div class="tt-row">
-        <button type="button" data-action="save-placement">{{localize "TALKING_TOKENS.Panel.SavePlacement"}}</button>
-        <button type="button" data-action="cancel-placement">{{localize "TALKING_TOKENS.Panel.CancelPlacement"}}</button>
+        <button type="button" data-action="open-link" data-url="{{setup.guideUrl}}">
+          <i class="fas fa-book-open" aria-hidden="true"></i> {{localize "TALKING_TOKENS.Panel.OpenGuide"}}
+        </button>
+        <button type="button" data-action="copy-diagnostics">
+          <i class="fas fa-clipboard" aria-hidden="true"></i> {{localize "TALKING_TOKENS.Panel.CopyDiagnostics"}}
+        </button>
       </div>
-    {{else}}
-      <div class="tt-presets">
-        {{#each presets}}
-          <button type="button" data-action="apply-preset" data-preset="{{name}}">{{localize labelKey}}</button>
-        {{/each}}
-      </div>
-      <button type="button" data-action="start-placement">{{localize "TALKING_TOKENS.Panel.StartPlacement"}}</button>
-    {{/if}}
-  </section>
+    </div>
+  </details>
 
-  <section class="tt-people">
+  <section class="tt-section tt-people">
     <h3>{{localize "TALKING_TOKENS.Panel.People"}}</h3>
     {{#each players}}
       <div class="tt-person">
@@ -138,11 +120,63 @@
             </option>
           {{/each}}
         </select>
-        <button type="button" class="tt-test" data-action="test-user" data-user-id="{{id}}"
+        <button type="button" class="tt-icon-button" data-action="test-user" data-user-id="{{id}}"
                 aria-label="{{localize 'TALKING_TOKENS.Panel.Test' name=name}}" title="{{localize 'TALKING_TOKENS.Panel.Test' name=name}}">
           <i class="fas fa-play" aria-hidden="true"></i>
         </button>
       </div>
     {{/each}}
   </section>
+
+  <details class="tt-section tt-appearance" data-section="bubbles" {{#if isBubblesOpen}}open{{/if}}>
+    <summary><h3>{{localize "TALKING_TOKENS.Panel.BubbleSettings"}}</h3></summary>
+    <div class="tt-section-body">
+      <div class="tt-group">
+        <p class="tt-hint">{{localize "TALKING_TOKENS.Panel.PickDefaultBubble"}}</p>
+        <div class="tt-bubbles">
+          {{#each bubbles}}
+            <div class="tt-bubble-item">
+              {{> "modules/talking-tokens/templates/bubble-tile.hbs" action="pick-default-bubble"}}
+              {{#if canRemove}}
+                <button type="button" class="tt-bubble-remove" data-action="remove-bubble" data-bubble-id="{{id}}"
+                        aria-label="{{localize 'TALKING_TOKENS.Panel.RemoveBubble' name=label}}"
+                        title="{{localize 'TALKING_TOKENS.Panel.RemoveBubble' name=label}}">
+                  <i class="fas fa-times" aria-hidden="true"></i>
+                </button>
+              {{/if}}
+            </div>
+          {{/each}}
+          <button type="button" class="tt-bubble tt-bubble-add" data-action="add-bubble"
+                  aria-label="{{localize 'TALKING_TOKENS.Panel.AddBubble'}}" title="{{localize 'TALKING_TOKENS.Panel.AddBubble'}}">
+            <i class="fas fa-plus" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+
+      <label class="tt-size">
+        <span>{{localize "TALKING_TOKENS.Panel.Size"}}</span>
+        <input type="range" name="scale" min="{{scaleRange.min}}" max="{{scaleRange.max}}" step="{{scaleRange.step}}"
+               value="{{scale}}">
+        <output name="scaleValue">{{scale}}</output>
+      </label>
+
+      <div class="tt-group">
+        <h4>{{localize "TALKING_TOKENS.Panel.Position"}}</h4>
+        {{#if placement.isActive}}
+          <p class="tt-hint">{{localize "TALKING_TOKENS.Panel.PlacementActive" token=placement.tokenName}}</p>
+          <div class="tt-row">
+            <button type="button" data-action="save-placement">{{localize "TALKING_TOKENS.Panel.SavePlacement"}}</button>
+            <button type="button" data-action="cancel-placement">{{localize "TALKING_TOKENS.Panel.CancelPlacement"}}</button>
+          </div>
+        {{else}}
+          <div class="tt-presets">
+            {{#each presets}}
+              <button type="button" data-action="apply-preset" data-preset="{{name}}">{{localize labelKey}}</button>
+            {{/each}}
+          </div>
+          <button type="button" data-action="start-placement">{{localize "TALKING_TOKENS.Panel.StartPlacement"}}</button>
+        {{/if}}
+      </div>
+    </div>
+  </details>
 </div>

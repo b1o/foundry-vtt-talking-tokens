@@ -1,12 +1,13 @@
 import { getFilePickerClass } from "../compat.mjs";
 import { LiveWindow } from "./live-window.mjs";
 import { MODULE_ID, TEMPLATE_PATH } from "../module-id.mjs";
-import { ACTION } from "../bridge/connection-status.mjs";
+import { SESSION_ACTION } from "../bridge/connection-status.mjs";
 
-/** Actions that only buttons inside the panel use; the status line uses ACTION. */
+/** Actions of the buttons inside the panel; the button next to the status uses SESSION_ACTION. */
 const PANEL_ACTION = Object.freeze({
   SAVE_TOKEN: "save-token",
-  OPEN_GUIDE: "open-guide",
+  /** A web page (guide, bridge download, bot invite, help); the desktop app opens it in the default browser. */
+  OPEN_LINK: "open-link",
   PICK_GM: "pick-gm",
   APPLY_PRESET: "apply-preset",
   START_PLACEMENT: "start-placement",
@@ -46,6 +47,11 @@ export class ControlPanel extends LiveWindow {
   #commands;
   /** The token field keeps its text across renders, so a status change does not clear what the GM typed. */
   #typedToken = "";
+  /**
+   * The collapsible sections that the GM opened or closed while the panel is open; a render would reset them.
+   * Setup also opens by itself while a setup step is needed.
+   */
+  #isSectionOpen = { setup: false, bubbles: false, token: false, gm: false };
 
   /** @param {{getView: () => object, commands: PanelCommands}} options */
   constructor({ getView, commands }) {
@@ -67,7 +73,15 @@ export class ControlPanel extends LiveWindow {
   }
 
   getData() {
-    return { ...this.#getView(), typedToken: this.#typedToken };
+    const view = this.#getView();
+    return {
+      ...view,
+      typedToken: this.#typedToken,
+      isSetupOpen: view.setup.isNeeded || this.#isSectionOpen.setup,
+      isBubblesOpen: this.#isSectionOpen.bubbles,
+      isTokenOpen: this.#isSectionOpen.token,
+      isGmOpen: this.#isSectionOpen.gm,
+    };
   }
 
   /** Update the speaking dots in place: a full render would close a select that the GM has open. */
@@ -95,6 +109,13 @@ export class ControlPanel extends LiveWindow {
       this.#commands.setAutoConnect(event.currentTarget.checked);
     });
     this.#activateSizeSlider(root);
+    // A click on the summary, not the "toggle" event: the browser also fires "toggle" for an element that a render
+    // creates open, and that is not the GM's choice. The click runs before the element changes, so store the reverse.
+    root.querySelectorAll("details[data-section]").forEach((details) => {
+      details.querySelector("summary").addEventListener("click", () => {
+        this.#isSectionOpen[details.dataset.section] = !details.open;
+      });
+    });
   }
 
   #activateSizeSlider(root) {
@@ -111,15 +132,9 @@ export class ControlPanel extends LiveWindow {
   #onAction(event, { action, discordId, url, preset, bubbleId, userId }) {
     event.preventDefault();
     switch (action) {
-      case ACTION.CONNECT: return this.#commands.connect();
-      case ACTION.DISCONNECT: return this.#commands.disconnect();
-      case ACTION.INVITE:
-      case ACTION.DOWNLOAD_BRIDGE:
-      case ACTION.EXPLAIN_LOCALHOST:
-      case ACTION.HOW_TO_FIX:
-      case PANEL_ACTION.OPEN_GUIDE:
-        return window.open(url, "_blank", "noopener");
-      case ACTION.SETUP: return this.element[0].querySelector("details.tt-setup")?.setAttribute("open", "");
+      case SESSION_ACTION.CONNECT: return this.#commands.connect();
+      case SESSION_ACTION.DISCONNECT: return this.#commands.disconnect();
+      case PANEL_ACTION.OPEN_LINK: return window.open(url, "_blank", "noopener");
       case PANEL_ACTION.SAVE_TOKEN: return this.#saveToken();
       case PANEL_ACTION.PICK_GM: return this.#commands.setGm(discordId);
       case PANEL_ACTION.APPLY_PRESET: return this.#commands.applyPreset(preset);

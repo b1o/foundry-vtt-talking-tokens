@@ -1,27 +1,123 @@
+/* The windows of the module: the GM panel and the bubble windows. */
+
 .talking-tokens .tt-panel {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  padding: 0.25rem;
 }
 
-.talking-tokens .tt-status {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  align-items: center;
+.talking-tokens .tt-section {
+  display: flex;
+  flex-direction: column;
   gap: 0.5rem;
 }
 
-.talking-tokens .tt-status button,
-.talking-tokens .tt-status .tt-hint {
-  grid-column: 1 / -1;
+.talking-tokens .tt-section + .tt-section {
+  border-top: 1px solid var(--color-border-light-2, #999);
+  padding-top: 0.75rem;
 }
 
-.talking-tokens .tt-status-text {
+.talking-tokens .tt-section-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-top: 0.5rem;
+}
+
+/* A group of controls that belong together inside a section, for example the token field and its button. */
+.talking-tokens .tt-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.talking-tokens h3,
+.talking-tokens h4 {
   margin: 0;
+  border: none;
+}
+
+.talking-tokens h4 {
+  font-size: var(--font-size-14, 14px);
+}
+
+/* A collapsible section: the heading is the summary, with the marker in front of it. */
+.talking-tokens details > summary {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.talking-tokens details > summary::-webkit-details-marker {
+  display: none;
+}
+
+.talking-tokens details > summary::before {
+  content: "\25B8";
+  width: 0.75rem;
+  transition: transform 0.15s;
+}
+
+.talking-tokens details[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+/* A small collapsible part inside a section, for a rare action (replace the token, change the GM's account). */
+.talking-tokens .tt-sub > summary {
+  font-size: var(--font-size-13, 13px);
+  opacity: 0.85;
+}
+
+.talking-tokens .tt-sub > .tt-group {
+  margin-top: 0.4rem;
+}
+
+.talking-tokens p {
+  margin: 0;
+}
+
+.talking-tokens .tt-hint {
+  font-size: var(--font-size-12, 12px);
+  opacity: 0.8;
+}
+
+.talking-tokens button {
+  margin: 0;
+  min-height: 2rem;
+}
+
+.talking-tokens .tt-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.talking-tokens .tt-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.talking-tokens .tt-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Status */
+
+.talking-tokens .tt-status-line {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--font-size-14, 14px);
 }
 
 .talking-tokens .tt-status-dot,
 .talking-tokens .tt-speaking-dot {
+  flex: 0 0 auto;
   width: 0.75rem;
   height: 0.75rem;
   border-radius: 50%;
@@ -32,21 +128,15 @@
 .talking-tokens .tt-tone-waiting { --tt-dot-color: #e0a800; }
 .talking-tokens .tt-tone-error { --tt-dot-color: #d9534f; }
 
-.talking-tokens .tt-setup {
+/* Setup: the step that the status asks for stands out from the rest of the section. */
+
+.talking-tokens .tt-step {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-}
-
-.talking-tokens .tt-setup summary {
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.talking-tokens .tt-field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.4rem;
+  padding: 0.5rem;
+  border-left: 3px solid var(--color-border-highlight, #ff6400);
+  background: rgba(0, 0, 0, 0.05);
 }
 
 .talking-tokens .tt-member {
@@ -60,12 +150,14 @@
   border-radius: 50%;
 }
 
+/* Players */
+
 .talking-tokens .tt-person {
   display: grid;
   grid-template-columns: auto 8rem 1fr 2rem;
   align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.25rem;
+  gap: 0.6rem;
+  padding: 0.2rem 0;
 }
 
 .talking-tokens .tt-speaking-dot.is-speaking {
@@ -73,34 +165,96 @@
   box-shadow: 0 0 0.4rem #3aa55d;
 }
 
-.talking-tokens .tt-hint {
-  margin: 0;
-  font-size: var(--font-size-12, 12px);
-  opacity: 0.8;
+.talking-tokens .tt-speaker-token {
+  display: block;
+  opacity: 0.7;
 }
 
-.talking-tokens .tt-checkbox {
-  grid-column: 1 / -1;
+.talking-tokens .tt-icon-button {
+  width: 2rem;
+  padding: 0;
+}
+
+.talking-tokens .tt-icon-button > i,
+.talking-tokens .tt-bubble > i,
+.talking-tokens .tt-bubble-remove > i {
+  margin: 0;
+}
+
+/* Bubble settings and the bubble windows */
+
+.talking-tokens .tt-bubbles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.talking-tokens .tt-bubble-item {
+  position: relative;
+}
+
+.talking-tokens .tt-bubble {
+  width: 3.25rem;
+  height: 3.25rem;
+  padding: 0.25rem;
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  justify-content: center;
+}
+
+.talking-tokens .tt-bubble img {
+  max-width: 100%;
+  max-height: 100%;
+  border: none;
+  object-fit: contain;
+}
+
+/* The chosen bubble (the default in the panel, the own bubble in a bubble window): the orange of an active control. */
+.talking-tokens .tt-bubble.is-chosen {
+  border: 2px solid var(--color-border-highlight, #ff6400);
+  box-shadow: 0 0 6px var(--color-shadow-highlight, #ff6400);
+}
+
+.talking-tokens .tt-bubble-remove {
+  position: absolute;
+  top: -0.4rem;
+  right: -0.4rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  min-height: 0;
+  padding: 0;
+  line-height: 1rem;
+  font-size: 0.65rem;
+  border-radius: 50%;
+}
+
+/* The first tile of a bubble window: "no own bubble", with a caption. */
+.talking-tokens .tt-bubble-inherited {
+  flex-direction: column;
+  width: 4.5rem;
+  gap: 0.1rem;
+}
+
+.talking-tokens .tt-bubble-inherited img {
+  max-height: 1.8rem;
+}
+
+.talking-tokens .tt-bubble-caption {
+  font-size: var(--font-size-11, 11px);
+  line-height: 1;
+}
+
+.talking-tokens .tt-size {
+  display: grid;
+  grid-template-columns: auto 1fr 2.5rem;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .talking-tokens .tt-presets {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 0.25rem;
-  margin-bottom: 0.25rem;
-}
-
-.talking-tokens .tt-row {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.talking-tokens .tt-speaker-token {
-  display: block;
-  opacity: 0.7;
+  gap: 0.35rem;
 }
 
 /* The scene control button shows the connection tone (green, yellow, red) of the panel status. */
@@ -135,97 +289,4 @@
   color: var(--color-text-light-highlight);
   border-color: var(--color-border-highlight);
   box-shadow: 0 0 10px var(--color-shadow-highlight);
-}
-
-.talking-tokens .tt-appearance h4 {
-  margin: 0.5rem 0 0.25rem;
-  border: none;
-}
-
-.talking-tokens .tt-bubbles {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-  margin: 0.25rem 0 0.5rem;
-}
-
-.talking-tokens .tt-bubble-item {
-  position: relative;
-}
-
-.talking-tokens .tt-bubble {
-  width: 3.25rem;
-  height: 3.25rem;
-  margin: 0;
-  padding: 0.25rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.talking-tokens .tt-bubble img {
-  max-width: 100%;
-  max-height: 100%;
-  border: none;
-  object-fit: contain;
-}
-
-.talking-tokens .tt-bubble > i {
-  margin: 0;
-}
-
-/* The chosen bubble (the default in the panel, the token's choice in its window): the orange of an active HUD control. */
-.talking-tokens .tt-bubble.is-chosen {
-  border: 2px solid var(--color-border-highlight, #ff6400);
-  box-shadow: 0 0 6px var(--color-shadow-highlight, #ff6400);
-}
-
-.talking-tokens .tt-bubble-remove {
-  position: absolute;
-  top: -0.35rem;
-  right: -0.35rem;
-  width: 1.1rem;
-  height: 1.1rem;
-  margin: 0;
-  padding: 0;
-  line-height: 1rem;
-  font-size: 0.65rem;
-  border-radius: 50%;
-}
-
-.talking-tokens .tt-bubble-remove > i {
-  margin: 0;
-}
-
-.talking-tokens .tt-size {
-  display: grid;
-  grid-template-columns: auto 1fr 2.5rem;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-/* The bubble window of a token or an actor: the first tile is "no own bubble", with a caption. */
-.talking-tokens .tt-bubble-inherited {
-  flex-direction: column;
-  width: 4.5rem;
-  gap: 0.1rem;
-}
-
-.talking-tokens .tt-bubble-inherited img {
-  max-height: 1.8rem;
-}
-
-.talking-tokens .tt-bubble-caption {
-  font-size: var(--font-size-11, 11px);
-  line-height: 1;
-}
-
-.talking-tokens .tt-test {
-  width: 2rem;
-  margin: 0;
-  padding: 0;
-}
-
-.talking-tokens .tt-test > i {
-  margin: 0;
 }

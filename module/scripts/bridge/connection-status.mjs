@@ -1,4 +1,3 @@
-import { BRIDGE_DOWNLOAD_URL, TROUBLESHOOTING_URL } from "../links.mjs";
 import { BRIDGE_STATE } from "../protocol.mjs";
 import { LINK_STATE } from "./bridge-client.mjs";
 
@@ -13,42 +12,39 @@ export const PANEL_STATE = Object.freeze({
 
 export const TONE = Object.freeze({ OK: "ok", WAITING: "waiting", ERROR: "error" });
 
-export const ACTION = Object.freeze({
+/**
+ * The buttons next to the status: only the Discord session, which the GM uses in every game. Setup steps (download,
+ * token, invite, "Who are you?", help links) live once in the Setup section of the panel.
+ */
+export const SESSION_ACTION = Object.freeze({
   CONNECT: "connect",
   DISCONNECT: "disconnect",
-  SETUP: "setup",
-  INVITE: "invite",
-  DOWNLOAD_BRIDGE: "download-bridge",
-  EXPLAIN_LOCALHOST: "explain-localhost",
-  HOW_TO_FIX: "how-to-fix",
 });
 
 const PRESENTATION = {
-  [PANEL_STATE.NOT_LOCALHOST]: { tone: TONE.ERROR, action: ACTION.EXPLAIN_LOCALHOST },
-  [PANEL_STATE.CONNECTING]: { tone: TONE.WAITING, action: null },
-  [PANEL_STATE.BRIDGE_NOT_FOUND]: { tone: TONE.ERROR, action: ACTION.DOWNLOAD_BRIDGE },
-  [PANEL_STATE.INCOMPATIBLE]: { tone: TONE.ERROR, action: ACTION.DOWNLOAD_BRIDGE },
-  [PANEL_STATE.NO_TOKEN]: { tone: TONE.WAITING, action: ACTION.SETUP },
-  [PANEL_STATE.IDLE]: { tone: TONE.ERROR, action: ACTION.CONNECT },
-  [PANEL_STATE.LOGGING_IN]: { tone: TONE.WAITING, action: null },
-  [PANEL_STATE.TOKEN_REJECTED]: { tone: TONE.ERROR, action: ACTION.SETUP },
-  [PANEL_STATE.DISCORD_UNREACHABLE]: { tone: TONE.ERROR, action: ACTION.CONNECT },
-  [PANEL_STATE.NO_SERVER]: { tone: TONE.ERROR, action: ACTION.INVITE },
-  [PANEL_STATE.NO_GM]: { tone: TONE.WAITING, action: ACTION.SETUP },
-  [PANEL_STATE.GM_NOT_IN_VOICE]: { tone: TONE.WAITING, action: ACTION.DISCONNECT },
-  // The bridge sees a permission change by itself and joins then, so the GM only needs to know the fix.
-  [PANEL_STATE.MISSING_PERMISSION]: { tone: TONE.ERROR, action: ACTION.HOW_TO_FIX },
-  [PANEL_STATE.JOINING]: { tone: TONE.WAITING, action: ACTION.DISCONNECT },
-  [PANEL_STATE.LISTENING]: { tone: TONE.OK, action: ACTION.DISCONNECT },
-  [PANEL_STATE.RECONNECTING]: { tone: TONE.WAITING, action: ACTION.DISCONNECT },
+  [PANEL_STATE.NOT_LOCALHOST]: { tone: TONE.ERROR, sessionAction: null },
+  [PANEL_STATE.CONNECTING]: { tone: TONE.WAITING, sessionAction: null },
+  [PANEL_STATE.BRIDGE_NOT_FOUND]: { tone: TONE.ERROR, sessionAction: null },
+  [PANEL_STATE.INCOMPATIBLE]: { tone: TONE.ERROR, sessionAction: null },
+  [PANEL_STATE.NO_TOKEN]: { tone: TONE.WAITING, sessionAction: null },
+  [PANEL_STATE.IDLE]: { tone: TONE.ERROR, sessionAction: SESSION_ACTION.CONNECT },
+  [PANEL_STATE.LOGGING_IN]: { tone: TONE.WAITING, sessionAction: null },
+  [PANEL_STATE.TOKEN_REJECTED]: { tone: TONE.ERROR, sessionAction: null },
+  [PANEL_STATE.DISCORD_UNREACHABLE]: { tone: TONE.ERROR, sessionAction: SESSION_ACTION.CONNECT },
+  [PANEL_STATE.NO_SERVER]: { tone: TONE.ERROR, sessionAction: SESSION_ACTION.DISCONNECT },
+  [PANEL_STATE.NO_GM]: { tone: TONE.WAITING, sessionAction: SESSION_ACTION.DISCONNECT },
+  [PANEL_STATE.GM_NOT_IN_VOICE]: { tone: TONE.WAITING, sessionAction: SESSION_ACTION.DISCONNECT },
+  [PANEL_STATE.MISSING_PERMISSION]: { tone: TONE.ERROR, sessionAction: SESSION_ACTION.DISCONNECT },
+  [PANEL_STATE.JOINING]: { tone: TONE.WAITING, sessionAction: SESSION_ACTION.DISCONNECT },
+  [PANEL_STATE.LISTENING]: { tone: TONE.OK, sessionAction: SESSION_ACTION.DISCONNECT },
+  [PANEL_STATE.RECONNECTING]: { tone: TONE.WAITING, sessionAction: SESSION_ACTION.DISCONNECT },
 };
 
 /**
  * @typedef {object} ConnectionStatus
  * @property {string} state  A value of PANEL_STATE.
  * @property {string} tone   A value of TONE.
- * @property {string|null} action  A value of ACTION: the one button that the status line offers.
- * @property {string|null} actionUrl  The web page that the action opens, if the action is a link.
+ * @property {string|null} sessionAction  A value of SESSION_ACTION: the button next to the status, if any.
  * @property {string|null} channelName
  * @property {string|null} inviteUrl
  * @property {{channel: string|null, bridge: string, module: string}} textData  The values for the status text.
@@ -62,29 +58,14 @@ const PRESENTATION = {
  */
 export function describeConnection(facts, { isLocalhost, moduleVersion }) {
   const state = panelState(facts, isLocalhost);
-  const { tone, action } = PRESENTATION[state];
-  const inviteUrl = facts.status?.inviteUrl ?? null;
   const channelName = facts.status?.channelName ?? null;
   return {
     state,
-    tone,
-    action,
-    actionUrl: actionUrl(action, inviteUrl),
+    ...PRESENTATION[state],
     channelName,
-    inviteUrl,
+    inviteUrl: facts.status?.inviteUrl ?? null,
     textData: { channel: channelName, bridge: facts.bridgeVersion ?? "?", module: moduleVersion },
   };
-}
-
-function actionUrl(action, inviteUrl) {
-  switch (action) {
-    case ACTION.INVITE: return inviteUrl;
-    case ACTION.DOWNLOAD_BRIDGE: return BRIDGE_DOWNLOAD_URL;
-    case ACTION.EXPLAIN_LOCALHOST:
-    case ACTION.HOW_TO_FIX:
-      return TROUBLESHOOTING_URL;
-    default: return null;
-  }
 }
 
 function panelState(facts, isLocalhost) {

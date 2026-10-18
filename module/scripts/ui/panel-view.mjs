@@ -1,19 +1,41 @@
 import { PANEL_STATE } from "../bridge/connection-status.mjs";
-import { BRIDGE_DOWNLOAD_URL, SETUP_GUIDE_URL } from "../links.mjs";
+import { BRIDGE_DOWNLOAD_URL, SETUP_GUIDE_URL, TROUBLESHOOTING_URL } from "../links.mjs";
 import { FALLBACK_BUBBLE_ID } from "../tokens/bubble-library.mjs";
 import { ANCHOR_PRESETS } from "../tokens/indicator-layout.mjs";
 import { toBubbleTile } from "./bubble-tile.mjs";
 
-/** In these states the setup section opens by itself, because the GM must act there. */
-const SETUP_STATES = new Set([PANEL_STATE.NO_TOKEN, PANEL_STATE.TOKEN_REJECTED, PANEL_STATE.NO_GM]);
+const LINK = Object.freeze({
+  DOWNLOAD_BRIDGE: { labelKey: "TALKING_TOKENS.Panel.DownloadBridge", icon: "fa-download", url: BRIDGE_DOWNLOAD_URL },
+  WHY_LOCALHOST: { labelKey: "TALKING_TOKENS.Panel.WhyLocalhost", icon: "fa-circle-question", url: TROUBLESHOOTING_URL },
+  HOW_TO_FIX: { labelKey: "TALKING_TOKENS.Panel.HowToFix", icon: "fa-circle-question", url: TROUBLESHOOTING_URL },
+});
 
-/** In these states no usable bridge is connected, so the bot setup cannot work: it says why instead. */
-const NO_BRIDGE_TEXT = {
-  [PANEL_STATE.NOT_LOCALHOST]: "TALKING_TOKENS.Panel.SetupNeedsLocalhost",
-  [PANEL_STATE.CONNECTING]: "TALKING_TOKENS.Panel.SetupNeedsBridge",
-  [PANEL_STATE.BRIDGE_NOT_FOUND]: "TALKING_TOKENS.Panel.SetupNeedsBridge",
-  [PANEL_STATE.INCOMPATIBLE]: "TALKING_TOKENS.Panel.SetupNeedsNewBridge",
+/**
+ * The step that a state asks the GM to do in the Setup section: a text, and a web page to open, if any. The status
+ * text of these states points to the Setup section, so each step shows in one place only.
+ */
+const SETUP_STEP = {
+  [PANEL_STATE.NOT_LOCALHOST]: { textKey: "TALKING_TOKENS.Panel.SetupNeedsLocalhost", link: LINK.WHY_LOCALHOST },
+  [PANEL_STATE.CONNECTING]: { textKey: "TALKING_TOKENS.Panel.SetupNeedsBridge", link: LINK.DOWNLOAD_BRIDGE },
+  [PANEL_STATE.BRIDGE_NOT_FOUND]: { textKey: "TALKING_TOKENS.Panel.SetupNeedsBridge", link: LINK.DOWNLOAD_BRIDGE },
+  [PANEL_STATE.INCOMPATIBLE]: { textKey: "TALKING_TOKENS.Panel.SetupNeedsNewBridge", link: LINK.DOWNLOAD_BRIDGE },
+  [PANEL_STATE.NO_TOKEN]: { textKey: "TALKING_TOKENS.Panel.SetupNeedsToken", link: null },
+  [PANEL_STATE.TOKEN_REJECTED]: { textKey: "TALKING_TOKENS.Panel.SetupNeedsNewToken", link: null },
+  [PANEL_STATE.NO_SERVER]: { textKey: "TALKING_TOKENS.Panel.SetupNeedsInvite", link: null },
+  [PANEL_STATE.NO_GM]: { textKey: "TALKING_TOKENS.Panel.SetupNeedsGm", link: null },
+  [PANEL_STATE.MISSING_PERMISSION]: { textKey: "TALKING_TOKENS.Panel.SetupNeedsPermission", link: LINK.HOW_TO_FIX },
 };
+
+/** The states in which the bridge needs a (new) token. */
+const TOKEN_STATES = new Set([PANEL_STATE.NO_TOKEN, PANEL_STATE.TOKEN_REJECTED]);
+
+/** "Looking for the bridge" lasts a moment on each load; the Setup section does not open for it. */
+const PASSING_STATES = new Set([PANEL_STATE.CONNECTING]);
+
+/** In these states no usable bridge is connected, so the panel cannot send a token to it. */
+const NO_BRIDGE_STATES = new Set([
+  PANEL_STATE.NOT_LOCALHOST, PANEL_STATE.CONNECTING, PANEL_STATE.BRIDGE_NOT_FOUND, PANEL_STATE.INCOMPATIBLE,
+]);
 
 /** Only these states have a Discord session, so only they can list voice members. */
 const DISCORD_STATES = new Set([
@@ -51,20 +73,23 @@ export function buildPanelView(input) {
     status: {
       ...status,
       textKey: `TALKING_TOKENS.Status.${status.state}`,
-      actionKey: status.action ? `TALKING_TOKENS.Action.${status.action}` : null,
+      sessionActionKey: status.sessionAction ? `TALKING_TOKENS.SessionAction.${status.sessionAction}` : null,
     },
-    isSetupOpen: SETUP_STATES.has(status.state),
-    canSetToken: !NO_BRIDGE_TEXT[status.state],
-    noBridgeTextKey: NO_BRIDGE_TEXT[status.state] ?? null,
-    canDownloadBridge: status.state !== PANEL_STATE.NOT_LOCALHOST,
-    bridgeDownloadUrl: BRIDGE_DOWNLOAD_URL,
     voiceSummary: status.state === PANEL_STATE.LISTENING ? summarizeVoice(voiceMembers, mapping, status.channelName) : null,
-    tokenResultKey: tokenResultKey(tokenResult),
-    inviteUrl: status.inviteUrl,
-    setupGuideUrl: SETUP_GUIDE_URL,
-    gmCandidates: hasDiscord ? voiceMembers : [],
-    hasDiscord,
     isAutoConnectOn,
+    setup: {
+      isNeeded: Boolean(SETUP_STEP[status.state]) && !PASSING_STATES.has(status.state),
+      step: SETUP_STEP[status.state] ?? null,
+      canSetToken: !NO_BRIDGE_STATES.has(status.state),
+      // Outside their own step, the token field and the account list are rare actions, so they start collapsed.
+      isTokenStep: TOKEN_STATES.has(status.state),
+      isGmStep: status.state === PANEL_STATE.NO_GM,
+      tokenResultKey: tokenResultKey(tokenResult),
+      inviteUrl: status.inviteUrl,
+      gmCandidates: hasDiscord ? voiceMembers : [],
+      hasDiscord,
+      guideUrl: SETUP_GUIDE_URL,
+    },
     placement,
     bubbles: bubbleOptions(bubbles.library, bubbles.defaultBubbleId),
     scale: bubbles.scale,
