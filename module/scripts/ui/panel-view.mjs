@@ -2,6 +2,7 @@ import { PANEL_STATE } from "../bridge/connection-status.mjs";
 import { BRIDGE_DOWNLOAD_URL, SETUP_GUIDE_URL } from "../links.mjs";
 import { FALLBACK_BUBBLE_ID } from "../tokens/bubble-library.mjs";
 import { ANCHOR_PRESETS } from "../tokens/indicator-layout.mjs";
+import { toBubbleTile } from "./bubble-tile.mjs";
 
 /** In these states the setup section opens by itself, because the GM must act there. */
 const SETUP_STATES = new Set([PANEL_STATE.NO_TOKEN, PANEL_STATE.TOKEN_REJECTED, PANEL_STATE.NO_GM]);
@@ -99,13 +100,7 @@ function summarizeVoice(voiceMembers, mapping, channelName) {
 function bubbleOptions(library, defaultBubbleId) {
   // A default that points to a removed image shows the classic bubble, so mark the bubble that really shows.
   const shownId = library.some((bubble) => bubble.id === defaultBubbleId) ? defaultBubbleId : FALLBACK_BUBBLE_ID;
-  return library.map((bubble) => ({
-    id: bubble.id,
-    path: bubble.path,
-    ...(bubble.isShipped ? { labelKey: bubble.name } : { label: bubble.name }),
-    isDefault: bubble.id === shownId,
-    canRemove: !bubble.isShipped,
-  }));
+  return library.map((bubble) => ({ ...toBubbleTile(bubble, bubble.id === shownId), canRemove: !bubble.isShipped }));
 }
 
 function memberOptions(voiceMembers, linkedId) {

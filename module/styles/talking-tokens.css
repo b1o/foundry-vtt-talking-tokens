@@ -175,8 +175,7 @@
 }
 
 /* The chosen bubble (the default in the panel, the token's choice in its window): the orange of an active HUD control. */
-.talking-tokens .tt-bubble.is-default,
-.talking-tokens .tt-bubble.is-selected {
+.talking-tokens .tt-bubble.is-chosen {
   border: 2px solid var(--color-border-highlight, #ff6400);
   box-shadow: 0 0 6px var(--color-shadow-highlight, #ff6400);
 }

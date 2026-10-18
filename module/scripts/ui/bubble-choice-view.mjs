@@ -1,3 +1,5 @@
+import { toBubbleTile } from "./bubble-tile.mjs";
+
 /**
  * The data for templates/bubble-choice.hbs: one tile for "no own bubble" (it shows the bubble that is used then),
  * then one tile per library bubble. Text keys are resolved in the template.
@@ -10,12 +12,7 @@ export function buildBubbleChoiceView(library, ownBubbleId, inheritedBubble, inh
   // An own bubble whose image was removed from the library is not used, so the first tile shows as chosen.
   const ownBubble = library.find((bubble) => bubble.id === ownBubbleId) ?? null;
   return {
-    inheritedTile: { path: inheritedBubble.path, labelKey: inheritedLabelKey, isSelected: !ownBubble },
-    bubbles: library.map((bubble) => ({
-      id: bubble.id,
-      path: bubble.path,
-      ...(bubble.isShipped ? { labelKey: bubble.name } : { label: bubble.name }),
-      isSelected: bubble.id === ownBubble?.id,
-    })),
+    inheritedTile: { path: inheritedBubble.path, labelKey: inheritedLabelKey, isChosen: !ownBubble },
+    bubbles: library.map((bubble) => toBubbleTile(bubble, bubble.id === ownBubble?.id)),
   };
 }

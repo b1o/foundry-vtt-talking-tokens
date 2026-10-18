@@ -56,7 +56,7 @@ class BubbleWindow extends LiveWindow {
 
   activateListeners(html) {
     super.activateListeners(html);
-    html[0].querySelectorAll("[data-bubble-id]").forEach((button) => {
+    html[0].querySelectorAll("[data-action=choose-bubble]").forEach((button) => {
       button.addEventListener("click", () => this.#choose(button.dataset.bubbleId || null));
     });
   }

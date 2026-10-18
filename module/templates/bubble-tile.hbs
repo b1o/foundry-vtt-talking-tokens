@@ -1,0 +1,5 @@
+<button type="button" class="tt-bubble {{#if isChosen}}is-chosen{{/if}}" data-action="{{action}}" data-bubble-id="{{id}}"
+        aria-pressed="{{#if isChosen}}true{{else}}false{{/if}}"
+        title="{{#if labelKey}}{{localize labelKey}}{{else}}{{label}}{{/if}}">
+  <img src="{{path}}" alt="{{#if labelKey}}{{localize labelKey}}{{else}}{{label}}{{/if}}">
+</button>

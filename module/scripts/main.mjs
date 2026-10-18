@@ -3,6 +3,7 @@ import { BridgeLink } from "./bridge/bridge-link.mjs";
 import { describeConnection, isLoopbackHostname } from "./bridge/connection-status.mjs";
 import { StatusHistory } from "./bridge/status-history.mjs";
 import { assignDiscordId } from "./mapping/user-mapping.mjs";
+import { loadTemplatesCompat } from "./compat.mjs";
 import { MODULE_ID } from "./module-id.mjs";
 import { bridgeUrl } from "./protocol.mjs";
 import {
@@ -23,6 +24,7 @@ import { addControlButton, showStatusOnControlButton } from "./ui/control-button
 import { ControlPanel } from "./ui/control-panel.mjs";
 import { copyDiagnostics } from "./ui/copy-diagnostics.mjs";
 import { buildPanelView } from "./ui/panel-view.mjs";
+import { BUBBLE_TILE_PARTIAL } from "./ui/bubble-tile.mjs";
 import { BubbleWindows } from "./ui/bubble-window.mjs";
 import {
   addActorHeaderButton, addActorHeaderControl, addTokenHeaderButton, addTokenHeaderControl,
@@ -160,6 +162,7 @@ Hooks.once("init", () => {
     },
   });
   registerSpeakerHotkey();
+  loadTemplatesCompat([BUBBLE_TILE_PARTIAL]);
 });
 
 Hooks.once("ready", () => {

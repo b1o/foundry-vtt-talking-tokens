@@ -36,6 +36,12 @@ export function getFilePickerClass() {
   return foundry.applications?.apps?.FilePicker?.implementation ?? FilePicker;
 }
 
+/** v13 moved loadTemplates to foundry.applications.handlebars. It also registers each template as a partial. */
+export function loadTemplatesCompat(paths) {
+  const load = foundry.applications?.handlebars?.loadTemplates ?? loadTemplates;
+  return load(paths);
+}
+
 /** v13 moved loadTexture to foundry.canvas. */
 export function loadTextureCompat(path) {
   const load = foundry.canvas?.loadTexture ?? loadTexture;

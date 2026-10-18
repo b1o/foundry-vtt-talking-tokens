@@ -1,18 +1,15 @@
 <div class="tt-panel">
   <p class="tt-hint">{{localize hintKey}}</p>
   <div class="tt-bubbles">
-    <button type="button" class="tt-bubble tt-bubble-inherited {{#if inheritedTile.isSelected}}is-selected{{/if}}"
-            data-bubble-id="" aria-pressed="{{#if inheritedTile.isSelected}}true{{else}}false{{/if}}"
+    <button type="button" class="tt-bubble tt-bubble-inherited {{#if inheritedTile.isChosen}}is-chosen{{/if}}"
+            data-action="choose-bubble" data-bubble-id=""
+            aria-pressed="{{#if inheritedTile.isChosen}}true{{else}}false{{/if}}"
             title="{{localize inheritedTile.labelKey}}">
       <img src="{{inheritedTile.path}}" alt="{{localize inheritedTile.labelKey}}">
       <span class="tt-bubble-caption">{{localize inheritedTile.labelKey}}</span>
     </button>
     {{#each bubbles}}
-      <button type="button" class="tt-bubble {{#if isSelected}}is-selected{{/if}}" data-bubble-id="{{id}}"
-              aria-pressed="{{#if isSelected}}true{{else}}false{{/if}}"
-              title="{{#if labelKey}}{{localize labelKey}}{{else}}{{label}}{{/if}}">
-        <img src="{{path}}" alt="{{#if labelKey}}{{localize labelKey}}{{else}}{{label}}{{/if}}">
-      </button>
+      {{> "modules/talking-tokens/templates/bubble-tile.hbs" action="choose-bubble"}}
     {{/each}}
   </div>
   <p class="tt-hint">{{localize "TALKING_TOKENS.BubbleWindow.LibraryHint"}}</p>

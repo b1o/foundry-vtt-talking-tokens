@@ -78,11 +78,7 @@
     <div class="tt-bubbles">
       {{#each bubbles}}
         <div class="tt-bubble-item">
-          <button type="button" class="tt-bubble {{#if isDefault}}is-default{{/if}}" data-action="pick-default-bubble"
-                  data-bubble-id="{{id}}" aria-pressed="{{#if isDefault}}true{{else}}false{{/if}}"
-                  title="{{#if labelKey}}{{localize labelKey}}{{else}}{{label}}{{/if}}">
-            <img src="{{path}}" alt="{{#if labelKey}}{{localize labelKey}}{{else}}{{label}}{{/if}}">
-          </button>
+          {{> "modules/talking-tokens/templates/bubble-tile.hbs" action="pick-default-bubble"}}
           {{#if canRemove}}
             <button type="button" class="tt-bubble-remove" data-action="remove-bubble" data-bubble-id="{{id}}"
                     aria-label="{{localize 'TALKING_TOKENS.Panel.RemoveBubble' name=label}}"

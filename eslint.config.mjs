@@ -28,7 +28,7 @@ export default [
     languageOptions: {
       globals: { ...globals.browser, game: "readonly", canvas: "readonly", ui: "readonly", Hooks: "readonly",
         foundry: "readonly", CONFIG: "readonly", CONST: "readonly", PIXI: "readonly",
-        Application: "readonly", FilePicker: "readonly", loadTexture: "readonly" },
+        Application: "readonly", FilePicker: "readonly", loadTemplates: "readonly", loadTexture: "readonly" },
     },
   },
 ];
