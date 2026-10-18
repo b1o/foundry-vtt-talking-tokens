@@ -95,7 +95,7 @@ Each GM makes their own bot. Discord has no other way to do this.
 
 ### Part 4: Connect the bot
 
-13. Under **Bot setup**, click the token field and paste the token (Ctrl+V). Click **Save token**.
+13. Under **Setup**, click the token field and paste the token (Ctrl+V). Click **Save token**.
 
     ![The token field and the Save token button](docs/images/panel-paste-token.png)
 
@@ -147,7 +147,8 @@ The small text under each player name in the panel shows the token that speaks n
     Faster: point at the token and press **M**. Press **M** again on the same token to remove the mark. Change the
     key in **Game Settings → Configure Controls → Talking Tokens**.
 
-22. The GM has no assigned character. To show your own voice, mark an NPC token with the microphone or M in the same way. Remove the mark to speak as the GM with no token.
+22. The GM has no assigned character. To show your own voice, mark an NPC token with the microphone or **M** in the
+    same way. Remove the mark to speak as the GM with no token.
 
 23. To check a token without speaking, click the **▶** button next to a name under **Players**. The bubble shows on
     that user's speaking token for 3 seconds, for every user.
@@ -156,7 +157,7 @@ The setup is complete.
 
 ## Change the bubble
 
-Open the panel. All settings under **Bubble settings** apply to every user at once.
+Open the panel and click **Bubble settings**. These settings apply to every user at once.
 
 - Click a bubble to use it on all tokens. The bubble in use has an orange frame.
 - Click **+** to add your own image (PNG, WebP, or SVG with a transparent background works best). Click the small
@@ -190,21 +191,22 @@ The bot follows you when you change the voice channel, and it leaves when you le
 
 ## Troubleshooting
 
-The status line at the top of the panel always shows one message. Find the message below.
+The status line at the top of the panel always shows one message. When it says "See Setup below", the **Setup**
+section of the panel is open and shows the next step at its top. Find the message below for more help.
 
 | The panel says | What to do |
 |---|---|
-| "Open Foundry on this computer through localhost …" | Open Foundry on the GM computer through the desktop app or `http://localhost:30000`. A browser blocks the connection to the bridge from any other address. |
+| "Talking Tokens works only when Foundry is open on this computer through localhost." | Open Foundry on the GM computer through the desktop app or `http://localhost:30000`. A browser blocks the connection to the bridge from any other address. |
 | "Looking for the Talking Tokens bridge…" | Wait a few seconds. If the message stays, reload Foundry (F5). |
 | "The Talking Tokens bridge is not running on this computer." | Double-click `talking-tokens-bridge.exe` (step 8). The panel connects by itself. If the black window closes at once, see [The bridge window closes](#the-bridge-window-closes). |
 | "The bridge is version … This module needs the bridge of version …" | Download the [newest bridge](https://github.com/b1o/foundry-vtt-talking-tokens/releases/latest/download/talking-tokens-bridge.exe), close the old bridge window, and start the new file. Also update the module in the Foundry setup screen. |
-| "Paste your Discord bot token to finish the setup." | Do steps 1 to 6 and step 13. |
+| "The bridge has no Discord bot token yet." | Do steps 1 to 6 and step 13. |
 | "Not connected to Discord." | Click **Connect**. To connect each time the world loads, tick **Connect to Discord when the world loads**. |
 | "Logging in to Discord…" | Wait. If this stays for more than a minute, close the bridge window and start the bridge again. |
 | "Discord rejected the bot token." | The token is wrong or old. Do steps 4 to 6 again, then step 13. |
 | "Discord cannot be reached." | Check the internet connection of the GM computer. Then click **Connect**. |
 | "The bot is in no Discord server." | Do steps 14 to 16. |
-| "Join a voice channel, then click your own name under Bot setup." | Do steps 17 and 18. |
+| "The bot does not know your Discord account yet." | Do steps 17 and 18. |
 | "Waiting for you to join a voice channel." | Join a voice channel in Discord. The bot follows you. |
 | "The bot cannot join #channel." | In Discord, open the channel settings → **Permissions**. Give the bot (or its role) **View Channel** and **Connect**. The bot then joins by itself. A full channel (user limit) also stops the bot. |
 | "Joining #channel…" | Wait a few seconds. If this stays, click **Disconnect**, then **Connect**. |
@@ -228,7 +230,7 @@ The status line at the top of the panel always shows one message. Find the messa
 
 ### Report a bug
 
-Open the panel, open **Bot setup**, and click **Copy diagnostics**. Paste the text into your bug report on
+Open the panel, open **Setup**, and click **Copy diagnostics**. Paste the text into your bug report on
 [GitHub](https://github.com/b1o/foundry-vtt-talking-tokens/issues). The text has versions and states only: no token
 and no names.
 
