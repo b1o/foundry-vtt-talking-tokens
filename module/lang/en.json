@@ -118,9 +118,10 @@
       "LibraryHint": "Add or remove images in the Talking Tokens panel, under Bubble settings."
     },
     "Hotkey": {
-      "Name": "Speak as the hovered token",
-      "Hint": "Point at one of your tokens and press the key. Your voice then shows on that token in this scene.",
-      "Marked": "Your voice now shows on {token}."
+      "Name": "Speak as the hovered token (on or off)",
+      "Hint": "Point at one of your tokens and press the key: your voice then shows on that token in this scene. Press it again on the same token to remove the mark. A player's voice then shows on the assigned character; the GM's voice shows on no token.",
+      "Marked": "Your voice now shows on {token}.",
+      "Unmarked": "Your voice no longer shows on {token}."
     }
   }
 }

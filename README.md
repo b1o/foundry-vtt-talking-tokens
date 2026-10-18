@@ -144,10 +144,10 @@ The small text under each player name in the panel shows the token that speaks n
 
     ![The microphone button in the Token HUD](docs/images/token-hud-microphone.png)
 
-    Faster: point at the token and press **M**. Change the key in **Game Settings → Configure Controls → Talking
-    Tokens**.
+    Faster: point at the token and press **M**. Press **M** again on the same token to remove the mark. Change the
+    key in **Game Settings → Configure Controls → Talking Tokens**.
 
-22. The GM has no assigned character. To show your own voice, mark an NPC token with the microphone in the same way.
+22. The GM has no assigned character. To show your own voice, mark an NPC token with the microphone or M in the same way. Remove the mark to speak as the GM with no token.
 
 23. To check a token without speaking, click the **▶** button next to a name under **Players**. The bubble shows on
     that user's speaking token for 3 seconds, for every user.

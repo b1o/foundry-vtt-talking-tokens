@@ -1,6 +1,5 @@
 import { getTokenHudRightColumn } from "../compat.mjs";
-import { log, notify } from "../output.mjs";
-import { getSpeakerUserId, toggleSpeakerMark } from "./token-flags.mjs";
+import { isOwnSpeakerMark, toggleOwnSpeakerMark } from "./speaker-mark-action.mjs";
 
 /**
  * The microphone button in the Token HUD: "my voice shows on this token". Only owners see it.
@@ -16,19 +15,12 @@ export function addSpeakerButton(hud, html) {
   button.type = "button";
   button.className = "control-icon tt-speaker-toggle";
   button.innerHTML = '<i class="fas fa-microphone" aria-hidden="true"></i>';
-  showMarkState(button, getSpeakerUserId(tokenDocument) === game.user.id);
-  button.addEventListener("click", () => onClick(button, tokenDocument));
+  showMarkState(button, isOwnSpeakerMark(tokenDocument));
+  button.addEventListener("click", async () => {
+    const isMarked = await toggleOwnSpeakerMark(tokenDocument);
+    if (isMarked !== null) showMarkState(button, isMarked);
+  });
   column.append(button);
-}
-
-async function onClick(button, tokenDocument) {
-  try {
-    await toggleSpeakerMark(tokenDocument, game.user);
-    showMarkState(button, getSpeakerUserId(tokenDocument) === game.user.id);
-  } catch (error) {
-    notify.error("TALKING_TOKENS.Notifications.MarkFailed");
-    log.error("The speaking token could not be changed.", error);
-  }
 }
 
 function showMarkState(button, isMarked) {
