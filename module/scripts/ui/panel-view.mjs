@@ -33,7 +33,6 @@ const DISCORD_STATES = new Set([
  * @property {boolean} isAutoConnectOn
  * @property {{library: import("../tokens/bubble-library.mjs").Bubble[], defaultBubbleId: string, scale: number,
  *   scaleRange: {min: number, max: number, step: number}}} bubbles
- * @property {{id: string, name: string, bubbleId: string|null}|null} selectedToken  The first selected token.
  */
 
 /**
@@ -43,7 +42,7 @@ const DISCORD_STATES = new Set([
 export function buildPanelView(input) {
   const {
     status, voiceMembers, users, mapping, speakingUserIds, tokenResult, placement, isAutoConnectOn, bubbles,
-    selectedToken, currentUserId,
+    currentUserId,
   } = input;
   const speaking = new Set(speakingUserIds);
   const hasDiscord = DISCORD_STATES.has(status.state);
@@ -68,11 +67,6 @@ export function buildPanelView(input) {
     placement,
     bubbles: bubbleOptions(bubbles.library, bubbles.defaultBubbleId),
     scale: bubbles.scale,
-    tokenBubble: selectedToken && {
-      tokenId: selectedToken.id,
-      tokenName: selectedToken.name,
-      options: tokenBubbleOptions(bubbles.library, selectedToken.bubbleId),
-    },
     scaleRange: bubbles.scaleRange,
     presets: Object.keys(ANCHOR_PRESETS).map((name) => ({ name, labelKey: `TALKING_TOKENS.Preset.${name}` })),
     // The GM's own row: the GM's voice shows on a marked NPC, and the Test button checks that.
@@ -112,19 +106,6 @@ function bubbleOptions(library, defaultBubbleId) {
     isDefault: bubble.id === shownId,
     canRemove: !bubble.isShipped,
   }));
-}
-
-function tokenBubbleOptions(library, tokenBubbleId) {
-  // A token whose image was removed from the library uses the default, so the select shows the default.
-  const hasOwnBubble = library.some((bubble) => bubble.id === tokenBubbleId);
-  return [
-    { value: "", labelKey: "TALKING_TOKENS.Panel.UseDefaultBubble", selected: !hasOwnBubble },
-    ...library.map((bubble) => ({
-      value: bubble.id,
-      ...(bubble.isShipped ? { labelKey: bubble.name } : { label: bubble.name }),
-      selected: hasOwnBubble && bubble.id === tokenBubbleId,
-    })),
-  ];
 }
 
 function memberOptions(voiceMembers, linkedId) {

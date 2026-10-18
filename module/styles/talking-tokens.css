@@ -174,8 +174,9 @@
   margin: 0;
 }
 
-/* The default bubble: the same orange as an active HUD control. */
-.talking-tokens .tt-bubble.is-default {
+/* The chosen bubble (the default in the panel, the token's choice in its window): the orange of an active HUD control. */
+.talking-tokens .tt-bubble.is-default,
+.talking-tokens .tt-bubble.is-selected {
   border: 2px solid var(--color-border-highlight, #ff6400);
   box-shadow: 0 0 6px var(--color-shadow-highlight, #ff6400);
 }
@@ -204,12 +205,20 @@
   gap: 0.5rem;
 }
 
-.talking-tokens .tt-token-bubble {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.25rem;
+/* The bubble window of one token: the first tile is "the bubble for all tokens", with a caption. */
+.talking-tokens .tt-bubble-default {
+  flex-direction: column;
+  width: 4.5rem;
+  gap: 0.1rem;
+}
+
+.talking-tokens .tt-bubble-default img {
+  max-height: 1.8rem;
+}
+
+.talking-tokens .tt-bubble-caption {
+  font-size: var(--font-size-11, 11px);
+  line-height: 1;
 }
 
 .talking-tokens .tt-test {

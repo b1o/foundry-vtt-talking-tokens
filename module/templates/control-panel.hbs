@@ -98,21 +98,6 @@
       </button>
     </div>
 
-    {{#if tokenBubble}}
-      <label class="tt-token-bubble">
-        <span>{{localize "TALKING_TOKENS.Panel.TokenBubble" token=tokenBubble.tokenName}}</span>
-        <select name="tokenBubble" data-token-id="{{tokenBubble.tokenId}}">
-          {{#each tokenBubble.options}}
-            <option value="{{value}}" {{#if selected}}selected{{/if}}>
-              {{#if labelKey}}{{localize labelKey}}{{else}}{{label}}{{/if}}
-            </option>
-          {{/each}}
-        </select>
-      </label>
-    {{else}}
-      <p class="tt-hint">{{localize "TALKING_TOKENS.Panel.SelectTokenForBubble"}}</p>
-    {{/if}}
-
     <label class="tt-size">
       <span>{{localize "TALKING_TOKENS.Panel.Size"}}</span>
       <input type="range" name="scale" min="{{scaleRange.min}}" max="{{scaleRange.max}}" step="{{scaleRange.step}}"

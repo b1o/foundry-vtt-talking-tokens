@@ -32,14 +32,11 @@
       "SetupNeedsNewBridge": "This bridge does not match the module version. Download the new bridge, close the old bridge window, and start the new one.",
       "SetupNeedsLocalhost": "The bot setup works only when Foundry is open on this computer through localhost.",
       "BubbleSettings": "Bubble settings",
-      "PickDefaultBubble": "Click a bubble to use it on all tokens. Add your own images with +.",
+      "PickDefaultBubble": "Click a bubble to use it on all tokens. Add your own images with +. To give one token its own bubble, open its Token Configuration and click Bubble in the header.",
       "AddBubble": "Add an image to the bubbles",
       "RemoveBubble": "Remove {name} from the bubbles",
       "Size": "Size",
       "Position": "Position",
-      "TokenBubble": "Bubble of {token}",
-      "UseDefaultBubble": "The bubble for all tokens",
-      "SelectTokenForBubble": "Select a token to give it its own bubble.",
       "You": "(you)",
       "Test": "Show a test bubble for {name} for 3 seconds"
     },
@@ -97,7 +94,8 @@
       "ImageFailed": "The image {path} could not be loaded. The classic bubble shows instead.",
       "MarkFailed": "The speaking token could not be changed.",
       "DiagnosticsCopied": "The diagnostics are on the clipboard. Paste them into your bug report.",
-      "DiagnosticsFailed": "The diagnostics could not be copied to the clipboard."
+      "DiagnosticsFailed": "The diagnostics could not be copied to the clipboard.",
+      "BubbleFailed": "The bubble of the token could not be changed."
     },
     "Settings": {
       "holdTimeMs": {
@@ -108,6 +106,14 @@
         "Name": "Show speech bubbles",
         "Hint": "Turn off to hide all speech bubbles on this computer only."
       }
+    },
+    "TokenBubble": {
+      "Button": "Bubble",
+      "Title": "Bubble: {token}",
+      "Hint": "The bubble that shows on this token while its speaker talks. A click saves at once.",
+      "UseDefault": "The bubble for all tokens",
+      "AllTokens": "All tokens",
+      "LibraryHint": "Add or remove images in the Talking Tokens panel, under Bubble settings."
     },
     "Hotkey": {
       "Name": "Speak as the hovered token",

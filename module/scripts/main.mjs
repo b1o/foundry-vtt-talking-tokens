@@ -17,14 +17,14 @@ import { IndicatorStyle } from "./tokens/indicator-style.mjs";
 import { PlacementMode } from "./tokens/placement-mode.mjs";
 import { addSpeakerButton } from "./tokens/speaker-hud-button.mjs";
 import { registerSpeakerHotkey } from "./tokens/speaker-hotkey.mjs";
-import {
-  findSceneSpeakerTokenNames, getTokenBubbleId, hasModuleFlagChange, hasTokenBubbleChange, setTokenBubbleId,
-} from "./tokens/token-flags.mjs";
+import { findSceneSpeakerTokenNames, hasModuleFlagChange, hasTokenBubbleChange } from "./tokens/token-flags.mjs";
 import { TokenIndicators } from "./tokens/token-indicators.mjs";
 import { addControlButton, showStatusOnControlButton } from "./ui/control-button.mjs";
 import { ControlPanel } from "./ui/control-panel.mjs";
 import { copyDiagnostics } from "./ui/copy-diagnostics.mjs";
 import { buildPanelView } from "./ui/panel-view.mjs";
+import { TokenBubbleWindows } from "./ui/token-bubble-window.mjs";
+import { addBubbleHeaderButton, addBubbleHeaderControl } from "./ui/token-config-button.mjs";
 
 const timers = { setTimeout: (...args) => window.setTimeout(...args), clearTimeout: (id) => window.clearTimeout(id) };
 const isLocalhost = isLoopbackHostname(window.location.hostname);
@@ -83,9 +83,10 @@ const currentStatus = () => describeConnection(link.facts, {
 
 const showConnectionOnControls = (html) => showStatusOnControlButton(html, currentStatus());
 
-const describeSelectedToken = (token) => token && {
-  id: token.id, name: token.name, bubbleId: getTokenBubbleId(token.document),
-};
+const bubbleWindows = new TokenBubbleWindows({
+  getLibrary: () => indicatorStyle.library,
+  getDefaultBubbleId,
+});
 
 const linkUser = (userId, discordId) => updateUserMapping((mapping) => assignDiscordId(mapping, userId, discordId));
 
@@ -105,7 +106,6 @@ const panel = new ControlPanel({
       library: indicatorStyle.library, defaultBubbleId: getDefaultBubbleId(), scale: getIndicatorScale(),
       scaleRange: SCALE_RANGE,
     },
-    selectedToken: describeSelectedToken(canvas.tokens?.controlled[0]),
     currentUserId: game.user.id,
   }),
   commands: {
@@ -144,10 +144,6 @@ const panel = new ControlPanel({
       facts: link.facts, status: currentStatus(), history: statusHistory.entries,
       mapping: getUserMapping(),
     }),
-    setTokenBubble: (tokenId, bubbleId) => {
-      const tokenDocument = canvas.scene?.tokens.get(tokenId);
-      if (tokenDocument) setTokenBubbleId(tokenDocument, bubbleId);
-    },
   },
 });
 
@@ -157,6 +153,7 @@ Hooks.once("init", () => {
       indicators.rebuildAll();
       placement.relayout();
       panel.refresh();
+      bubbleWindows.refreshAll();
     },
     onMappingChange: () => {
       relay.republish();
@@ -204,11 +201,20 @@ const onSpeakerFactsChange = () => {
 Hooks.on("updateActor", (_actor, change) => "ownership" in change && onSpeakerFactsChange());
 Hooks.on("updateUser", (_user, change) => "character" in change && onSpeakerFactsChange());
 Hooks.on("updateToken", (_token, change) => ("actorId" in change || hasModuleFlagChange(change)) && onSpeakerFactsChange());
-Hooks.on("updateToken", (tokenDocument, change) => hasTokenBubbleChange(change) && tokenDocument.object
-  && indicators.redrawToken(tokenDocument.object));
+Hooks.on("updateToken", (tokenDocument, change) => {
+  if (!hasTokenBubbleChange(change)) return;
+  if (tokenDocument.object) indicators.redrawToken(tokenDocument.object);
+  bubbleWindows.refreshToken(tokenDocument);
+});
+Hooks.on("deleteToken", (tokenDocument) => bubbleWindows.closeToken(tokenDocument));
 
-// The bubble picker in the panel follows the selected token.
-Hooks.on("controlToken", () => panel.refresh());
+// The "Bubble" button in the Token Config header: v11 (Application V1) and v13 (ApplicationV2).
+Hooks.on("getTokenConfigHeaderButtons", (sheet, buttons) => {
+  addBubbleHeaderButton(sheet, buttons, (tokenDocument) => bubbleWindows.open(tokenDocument));
+});
+Hooks.on("getHeaderControlsTokenConfig", (sheet, controls) => {
+  addBubbleHeaderControl(sheet, controls, (tokenDocument) => bubbleWindows.open(tokenDocument));
+});
 
 // The panel lists every player.
 Hooks.on("createUser", () => panel.refresh());

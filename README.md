@@ -161,8 +161,14 @@ Open the panel. All settings under **Bubble settings** apply to every user at on
 - Click a bubble to use it on all tokens. The bubble in use has an orange frame.
 - Click **+** to add your own image (PNG, WebP, or SVG with a transparent background works best). Click the small
   **×** on an image to remove it from the list.
-- To give one token its own bubble, select the token on the map. Then pick a bubble in **Bubble of** (followed by the token name). Pick
-  "The bubble for all tokens" to undo this.
+- To give one token its own bubble, open the token's configuration (double-click the token, or right-click it and
+  click the gear). Click **Bubble** in the window header.
+
+  ![The Bubble button in the Token Configuration header](docs/images/token-config-bubble-button.png)
+
+  Click a bubble. The choice saves at once. Click **All tokens** to undo this.
+
+  ![The bubble window of one token](docs/images/token-bubble-window.png)
 - Drag the **Size** slider. Visible bubbles change size while you drag.
 - Click a **Position** button, or select a token and click **Drag to place on the selected token**. Drag the bubble,
   then click **Save position**.

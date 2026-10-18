@@ -35,7 +35,6 @@ const PANEL_ACTION = Object.freeze({
  * @property {(bubbleId: string) => void} removeBubble
  * @property {(scale: number) => void} previewScale  While the GM drags the size slider.
  * @property {(scale: number) => void} saveScale
- * @property {(tokenId: string, bubbleId: string|null) => void} setTokenBubble  null: use the world default.
  * @property {(userId: string) => void} testUser  Show the user as speaking for a few seconds.
  * @property {() => void} copyDiagnostics
  */
@@ -126,10 +125,6 @@ export class ControlPanel extends getApplicationClass() {
       this.#commands.setAutoConnect(event.currentTarget.checked);
     });
     this.#activateSizeSlider(root);
-    root.querySelector("[name=tokenBubble]")?.addEventListener("change", (event) => {
-      const select = event.currentTarget;
-      this.#commands.setTokenBubble(select.dataset.tokenId, select.value || null);
-    });
   }
 
   #activateSizeSlider(root) {
