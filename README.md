@@ -149,6 +149,9 @@ The small text under each player name in the panel shows the token that speaks n
 
 22. The GM has no assigned character. To show your own voice, mark an NPC token with the microphone in the same way.
 
+23. To check a token without speaking, click the **▶** button next to a name under **Players**. The bubble shows on
+    that user's speaking token for 3 seconds, for every user.
+
 The setup is complete.
 
 ## Change the bubble
@@ -213,6 +216,12 @@ The status line at the top of the panel always shows one message. Find the messa
 - If another bridge already runs, the new window closes at once. This is correct: the first bridge stays.
 - If the bridge stops because of an error, it writes the error to
   `%APPDATA%\talking-tokens-bridge\bridge.log`. Send this file with your bug report.
+
+### Report a bug
+
+Open the panel, open **Bot setup**, and click **Copy diagnostics**. Paste the text into your bug report on
+[GitHub](https://github.com/b1o/foundry-vtt-talking-tokens/issues). The text has versions and states only: no token
+and no names.
 
 ## Privacy
 
