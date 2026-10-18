@@ -1,5 +1,6 @@
 import { PANEL_STATE } from "../bridge/connection-status.mjs";
 import { BRIDGE_DOWNLOAD_URL, SETUP_GUIDE_URL } from "../links.mjs";
+import { FALLBACK_BUBBLE_ID } from "../tokens/bubble-library.mjs";
 import { ANCHOR_PRESETS } from "../tokens/indicator-layout.mjs";
 
 /** In these states the setup section opens by itself, because the GM must act there. */
@@ -29,6 +30,8 @@ const DISCORD_STATES = new Set([
  * @property {{accepted: boolean, error: string|null}|null} tokenResult  The reply to the last token that the GM sent.
  * @property {{isActive: boolean, tokenName: string|null}} placement
  * @property {boolean} isAutoConnectOn
+ * @property {{library: import("../tokens/bubble-library.mjs").Bubble[], defaultBubbleId: string, scale: number,
+ *   scaleRange: {min: number, max: number, step: number}}} bubbles
  */
 
 /**
@@ -36,7 +39,9 @@ const DISCORD_STATES = new Set([
  * @param {PanelInput} input
  */
 export function buildPanelView(input) {
-  const { status, voiceMembers, users, mapping, speakingUserIds, tokenResult, placement, isAutoConnectOn } = input;
+  const {
+    status, voiceMembers, users, mapping, speakingUserIds, tokenResult, placement, isAutoConnectOn, bubbles,
+  } = input;
   const speaking = new Set(speakingUserIds);
   const hasDiscord = DISCORD_STATES.has(status.state);
   return {
@@ -57,6 +62,9 @@ export function buildPanelView(input) {
     hasDiscord,
     isAutoConnectOn,
     placement,
+    bubbles: bubbleOptions(bubbles.library, bubbles.defaultBubbleId),
+    scale: bubbles.scale,
+    scaleRange: bubbles.scaleRange,
     presets: Object.keys(ANCHOR_PRESETS).map((name) => ({ name, labelKey: `TALKING_TOKENS.Preset.${name}` })),
     players: users.filter((user) => !user.isGM).map((user) => ({
       id: user.id,
@@ -66,6 +74,18 @@ export function buildPanelView(input) {
       options: memberOptions(voiceMembers, mapping[user.id] ?? null),
     })),
   };
+}
+
+function bubbleOptions(library, defaultBubbleId) {
+  // A default that points to a removed image shows the classic bubble, so mark the bubble that really shows.
+  const shownId = library.some((bubble) => bubble.id === defaultBubbleId) ? defaultBubbleId : FALLBACK_BUBBLE_ID;
+  return library.map((bubble) => ({
+    id: bubble.id,
+    path: bubble.path,
+    ...(bubble.isShipped ? { labelKey: bubble.name } : { label: bubble.name }),
+    isDefault: bubble.id === shownId,
+    canRemove: !bubble.isShipped,
+  }));
 }
 
 function memberOptions(voiceMembers, linkedId) {

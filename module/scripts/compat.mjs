@@ -31,6 +31,11 @@ export function getSceneControlTool(html, toolName) {
   return root?.querySelector(`[data-tool="${toolName}"]`) ?? null;
 }
 
+/** v13 moved FilePicker to foundry.applications.apps, with a configurable implementation. */
+export function getFilePickerClass() {
+  return foundry.applications?.apps?.FilePicker?.implementation ?? FilePicker;
+}
+
 /** v13 moved loadTexture to foundry.canvas. */
 export function loadTextureCompat(path) {
   const load = foundry.canvas?.loadTexture ?? loadTexture;

@@ -4,7 +4,7 @@ import { findSpeakerTokenIds, planMark, planMarkToggle } from "./speaker-rule.mj
 /** All reads and writes of the token flags of this module go through this file. */
 const FLAG = Object.freeze({
   SPEAKER_USER_ID: "speakerUserId",
-  BUBBLE_STYLE: "bubbleStyle",
+  BUBBLE_ID: "bubbleId",
 });
 
 /** @returns {boolean} Did a token update change a flag of this module? */
@@ -17,9 +17,9 @@ export function getSpeakerUserId(tokenDocument) {
   return tokenDocument.getFlag(MODULE_ID, FLAG.SPEAKER_USER_ID) ?? null;
 }
 
-/** @returns {string|null} The bubble style of this token only, or null for the world default. */
-export function getBubbleStyleOverride(tokenDocument) {
-  return tokenDocument.getFlag(MODULE_ID, FLAG.BUBBLE_STYLE) ?? null;
+/** @returns {string|null} The library id of this token's own bubble, or null for the world default. */
+export function getTokenBubbleId(tokenDocument) {
+  return tokenDocument.getFlag(MODULE_ID, FLAG.BUBBLE_ID) ?? null;
 }
 
 /**

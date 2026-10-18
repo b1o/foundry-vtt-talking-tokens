@@ -4,12 +4,14 @@ import { describeConnection, isLoopbackHostname } from "./bridge/connection-stat
 import { assignDiscordId } from "./mapping/user-mapping.mjs";
 import { bridgeUrl } from "./protocol.mjs";
 import {
-  getHoldTimeMs, getUserMapping, isAutoConnectOn, registerSettings, setAutoConnect, setIndicatorAnchor,
-  updateUserMapping,
+  addLibraryBubble, getDefaultBubbleId, getHoldTimeMs, getIndicatorScale, getUserMapping, isAutoConnectOn,
+  registerSettings, removeLibraryBubble, SCALE_RANGE, setAutoConnect, setDefaultBubbleId, setIndicatorAnchor,
+  setIndicatorScale, updateUserMapping,
 } from "./settings.mjs";
 import { SpeakingRelay } from "./speaking/speaking-relay.mjs";
 import { SpeakingState } from "./speaking/speaking-state.mjs";
 import { ANCHOR_PRESETS } from "./tokens/indicator-layout.mjs";
+import { IndicatorStyle } from "./tokens/indicator-style.mjs";
 import { PlacementMode } from "./tokens/placement-mode.mjs";
 import { addSpeakerButton } from "./tokens/speaker-hud-button.mjs";
 import { registerSpeakerHotkey } from "./tokens/speaker-hotkey.mjs";
@@ -22,7 +24,8 @@ import { buildPanelView } from "./ui/panel-view.mjs";
 const timers = { setTimeout: (...args) => window.setTimeout(...args), clearTimeout: (id) => window.clearTimeout(id) };
 const isLocalhost = isLoopbackHostname(window.location.hostname);
 
-const indicators = new TokenIndicators({ getSpeakingUserIds: () => speakingState.speakingUserIds });
+const indicatorStyle = new IndicatorStyle();
+const indicators = new TokenIndicators({ getSpeakingUserIds: () => speakingState.speakingUserIds, style: indicatorStyle });
 
 const speakingState = new SpeakingState({
   getHoldTimeMs,
@@ -61,6 +64,7 @@ const link = new BridgeLink({
 
 const placement = new PlacementMode({
   getTexture: (token) => indicators.waitForTexture(token),
+  style: indicatorStyle,
   onChange: () => panel.refresh(),
 });
 
@@ -80,6 +84,10 @@ const panel = new ControlPanel({
     tokenResult: link.facts.tokenResult,
     placement: { isActive: placement.isActive, tokenName: placement.tokenName },
     isAutoConnectOn: isAutoConnectOn(),
+    bubbles: {
+      library: indicatorStyle.library, defaultBubbleId: getDefaultBubbleId(), scale: getIndicatorScale(),
+      scaleRange: SCALE_RANGE,
+    },
   }),
   commands: {
     connect: () => link.connectDiscord(),
@@ -99,12 +107,29 @@ const panel = new ControlPanel({
       if (anchor) setIndicatorAnchor(anchor);
     },
     cancelPlacement: () => placement.cancel(),
+    setDefaultBubble: setDefaultBubbleId,
+    addBubble: addLibraryBubble,
+    removeBubble: removeLibraryBubble,
+    previewScale: (scale) => {
+      indicatorStyle.previewScale(scale);
+      indicators.relayoutAll();
+      placement.relayout();
+    },
+    // The settings change rebuilds the indicators with the saved size.
+    saveScale: (scale) => {
+      indicatorStyle.endPreview();
+      setIndicatorScale(scale);
+    },
   },
 });
 
 Hooks.once("init", () => {
   registerSettings({
-    onIndicatorChange: () => indicators.rebuildAll(),
+    onIndicatorChange: () => {
+      indicators.rebuildAll();
+      placement.relayout();
+      panel.refresh();
+    },
     onMappingChange: () => {
       relay.republish();
       panel.refresh();

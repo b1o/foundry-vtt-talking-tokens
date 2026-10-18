@@ -1,5 +1,4 @@
 import { notify } from "../output.mjs";
-import { getIndicatorStyle } from "../settings.mjs";
 import { anchorFromPoint } from "./indicator-layout.mjs";
 import { layoutSprite } from "./indicator-sprite.mjs";
 
@@ -11,17 +10,20 @@ const PREVIEW_ALPHA = 0.85;
  */
 export class PlacementMode {
   #getTexture;
+  #style;
   #onChange;
   #token = null;
   #preview = null;
   #anchor = null;
 
   /**
-   * @param {{getTexture: (token: Token) => Promise<PIXI.Texture|null>, onChange: () => void}} options
+   * @param {{getTexture: (token: Token) => Promise<PIXI.Texture|null>,
+   *   style: import("./indicator-style.mjs").IndicatorStyle, onChange: () => void}} options
    *   getTexture waits for the load; onChange: placement started or ended.
    */
-  constructor({ getTexture, onChange }) {
+  constructor({ getTexture, style, onChange }) {
     this.#getTexture = getTexture;
+    this.#style = style;
     this.#onChange = onChange;
   }
 
@@ -49,7 +51,7 @@ export class PlacementMode {
   #start(token, texture) {
     this.cancel();
     this.#token = token;
-    this.#anchor = getIndicatorStyle().anchor;
+    this.#anchor = this.#style.layout.anchor;
     this.#preview = this.#createPreview(token, texture);
     this.#layout();
     this.#onChange();
@@ -111,7 +113,12 @@ export class PlacementMode {
     return preview;
   }
 
+  /** While the GM previews a size. */
+  relayout() {
+    if (this.isActive) this.#layout();
+  }
+
   #layout() {
-    layoutSprite(this.#preview, this.#token, { ...getIndicatorStyle(), anchor: this.#anchor });
+    layoutSprite(this.#preview, this.#token, { ...this.#style.layout, anchor: this.#anchor });
   }
 }

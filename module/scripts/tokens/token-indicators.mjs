@@ -1,11 +1,9 @@
 import { loadTextureCompat } from "../compat.mjs";
 import { notify } from "../output.mjs";
-import { areIndicatorsShown, getIndicatorStyle } from "../settings.mjs";
-import { BUBBLE_STYLE, resolveBubblePath, shippedBubblePath } from "./bubble-styles.mjs";
+import { areIndicatorsShown } from "../settings.mjs";
+import { FALLBACK_BUBBLE_PATH as FALLBACK_PATH } from "./bubble-library.mjs";
 import { layoutSprite } from "./indicator-sprite.mjs";
-import { findSceneSpeakerTokenIds, getBubbleStyleOverride } from "./token-flags.mjs";
-
-const FALLBACK_PATH = shippedBubblePath(BUBBLE_STYLE.CLASSIC);
+import { findSceneSpeakerTokenIds } from "./token-flags.mjs";
 
 /**
  * The indicators on the tokens of the viewed scene. Each indicator is a sprite child of its token, so it moves with
@@ -16,6 +14,7 @@ const FALLBACK_PATH = shippedBubblePath(BUBBLE_STYLE.CLASSIC);
  */
 export class TokenIndicators {
   #getSpeakingUserIds;
+  #style;
   /** @type {Map<Token, PIXI.Sprite>} */
   #sprites = new Map();
   /** @type {Map<string, PIXI.Texture|null>} null: the load failed. */
@@ -23,9 +22,10 @@ export class TokenIndicators {
   /** @type {Map<string, Promise<void>>} */
   #loads = new Map();
 
-  /** @param {{getSpeakingUserIds: () => string[]}} options */
-  constructor({ getSpeakingUserIds }) {
+  /** @param {{getSpeakingUserIds: () => string[], style: import("./indicator-style.mjs").IndicatorStyle}} options */
+  constructor({ getSpeakingUserIds, style }) {
     this.#getSpeakingUserIds = getSpeakingUserIds;
+    this.#style = style;
   }
 
   /** After a settings change or a new scene: forget the textures, and draw every indicator again. */
@@ -47,7 +47,12 @@ export class TokenIndicators {
   /** After a size change of the token. */
   relayoutToken(token) {
     const sprite = this.#sprites.get(token);
-    if (sprite && !sprite.destroyed) layoutSprite(sprite, token, getIndicatorStyle());
+    if (sprite && !sprite.destroyed) layoutSprite(sprite, token, this.#style.layout);
+  }
+
+  /** While the GM previews a size. */
+  relayoutAll() {
+    for (const token of this.#sprites.keys()) this.relayoutToken(token);
   }
 
   forgetToken(token) {
@@ -99,7 +104,7 @@ export class TokenIndicators {
     const sprite = new PIXI.Sprite(texture);
     token.addChild(sprite);
     this.#sprites.set(token, sprite);
-    layoutSprite(sprite, token, getIndicatorStyle());
+    layoutSprite(sprite, token, this.#style.layout);
   }
 
   #hide(token) {
@@ -109,8 +114,7 @@ export class TokenIndicators {
   }
 
   #pathFor(token) {
-    const { bubbleStyle, customImagePath } = getIndicatorStyle();
-    return resolveBubblePath(getBubbleStyleOverride(token.document), bubbleStyle, customImagePath);
+    return this.#style.bubblePathFor(token.document);
   }
 
   #cachedTexture(path) {

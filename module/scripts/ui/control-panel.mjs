@@ -1,4 +1,4 @@
-import { getApplicationClass } from "../compat.mjs";
+import { getApplicationClass, getFilePickerClass } from "../compat.mjs";
 import { MODULE_ID, TEMPLATE_PATH } from "../module-id.mjs";
 import { ACTION } from "../bridge/connection-status.mjs";
 
@@ -11,6 +11,9 @@ const PANEL_ACTION = Object.freeze({
   START_PLACEMENT: "start-placement",
   SAVE_PLACEMENT: "save-placement",
   CANCEL_PLACEMENT: "cancel-placement",
+  PICK_DEFAULT_BUBBLE: "pick-default-bubble",
+  ADD_BUBBLE: "add-bubble",
+  REMOVE_BUBBLE: "remove-bubble",
 });
 
 /**
@@ -25,6 +28,11 @@ const PANEL_ACTION = Object.freeze({
  * @property {() => void} startPlacement
  * @property {() => void} savePlacement
  * @property {() => void} cancelPlacement
+ * @property {(bubbleId: string) => void} setDefaultBubble
+ * @property {(path: string) => void} addBubble
+ * @property {(bubbleId: string) => void} removeBubble
+ * @property {(scale: number) => void} previewScale  While the GM drags the size slider.
+ * @property {(scale: number) => void} saveScale
  */
 
 /**
@@ -112,9 +120,21 @@ export class ControlPanel extends getApplicationClass() {
     root.querySelector("[name=autoConnect]")?.addEventListener("change", (event) => {
       this.#commands.setAutoConnect(event.currentTarget.checked);
     });
+    this.#activateSizeSlider(root);
   }
 
-  #onAction(event, { action, discordId, url, preset }) {
+  #activateSizeSlider(root) {
+    const slider = root.querySelector("[name=scale]");
+    const output = root.querySelector("[name=scaleValue]");
+    if (!slider) return;
+    slider.addEventListener("input", () => {
+      output.value = slider.value;
+      this.#commands.previewScale(Number(slider.value));
+    });
+    slider.addEventListener("change", () => this.#commands.saveScale(Number(slider.value)));
+  }
+
+  #onAction(event, { action, discordId, url, preset, bubbleId }) {
     event.preventDefault();
     switch (action) {
       case ACTION.CONNECT: return this.#commands.connect();
@@ -131,7 +151,15 @@ export class ControlPanel extends getApplicationClass() {
       case PANEL_ACTION.START_PLACEMENT: return this.#commands.startPlacement();
       case PANEL_ACTION.SAVE_PLACEMENT: return this.#commands.savePlacement();
       case PANEL_ACTION.CANCEL_PLACEMENT: return this.#commands.cancelPlacement();
+      case PANEL_ACTION.PICK_DEFAULT_BUBBLE: return this.#commands.setDefaultBubble(bubbleId);
+      case PANEL_ACTION.ADD_BUBBLE: return this.#browseBubble();
+      case PANEL_ACTION.REMOVE_BUBBLE: return this.#commands.removeBubble(bubbleId);
     }
+  }
+
+  #browseBubble() {
+    const FilePicker = getFilePickerClass();
+    new FilePicker({ type: "image", callback: (path) => this.#commands.addBubble(path) }).render(true);
   }
 
   #saveToken() {
