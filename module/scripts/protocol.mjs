@@ -6,7 +6,7 @@
  */
 
 /** Increase on any change that an older receiver cannot read. */
-export const PROTOCOL_VERSION = 1;
+export const PROTOCOL_VERSION = 2;
 
 export const DEFAULT_BRIDGE_PORT = 37521;
 
@@ -49,6 +49,8 @@ export const BRIDGE_STATE = Object.freeze({
   MISSING_PERMISSION: "missing-permission",
   JOINING: "joining",
   LISTENING: "listening",
+  /** The gateway connection to Discord dropped, and discord.js tries to resume it. */
+  RECONNECTING: "reconnecting",
 });
 
 export const TOKEN_ERROR = Object.freeze({

@@ -196,6 +196,7 @@ The status line at the top of the panel always shows one message. Find the messa
 | "Waiting for you to join a voice channel." | Join a voice channel in Discord. The bot follows you. |
 | "The bot cannot join #channel." | In Discord, open the channel settings → **Permissions**. Give the bot (or its role) **View Channel** and **Connect**. The bot then joins by itself. A full channel (user limit) also stops the bot. |
 | "Joining #channel…" | Wait a few seconds. If this stays, click **Disconnect**, then **Connect**. |
+| "The connection to Discord dropped. Reconnecting…" | Wait. The bridge reconnects by itself. If this stays, check the internet connection of the GM computer. |
 | "Listening in #channel." | All is well. The line below it counts the linked people and names the people who are not linked; link them under **Players**. If a bubble does not show, see below. |
 
 ### A bubble does not show

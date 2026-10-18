@@ -70,7 +70,8 @@
       "gm-not-in-voice": "Waiting for you to join a voice channel.",
       "missing-permission": "The bot cannot join #{channel}. In Discord, give the bot the View Channel and Connect permissions on that channel. The bot then joins by itself.",
       "joining": "Joining #{channel}…",
-      "listening": "Listening in #{channel}."
+      "listening": "Listening in #{channel}.",
+      "reconnecting": "The connection to Discord dropped. Reconnecting… If this stays, check the internet connection."
     },
     "Action": {
       "connect": "Connect",

@@ -32,6 +32,8 @@ export class BridgeController {
   #wantsConnection = false;
   /** Null until start() reads the config. */
   #status = null;
+  /** The status to show again when the gateway is back after a reconnect. */
+  #statusBeforeReconnect = null;
   #speakingTable;
   #voice;
 
@@ -130,13 +132,51 @@ export class BridgeController {
     }
     this.#session = session;
     session.onChange(() => this.#onDiscordChange());
+    session.onGatewayChange({
+      onReconnecting: () => this.#onGatewayReconnecting(session),
+      onBack: () => this.#onGatewayBack(session),
+      onLost: (code) => this.#onGatewayLost(session, code),
+    });
     this.#onDiscordChange();
   }
 
+  #onGatewayReconnecting(session) {
+    if (session !== this.#session || this.#status.state === BRIDGE_STATE.RECONNECTING) return;
+    this.#statusBeforeReconnect = this.#status;
+    this.#setState(BRIDGE_STATE.RECONNECTING, { channelName: this.#status.channelName });
+  }
+
+  /**
+   * The status from before the outage is still true unless something changed meanwhile; #followGm corrects that.
+   * A voice event during the outage already set a newer state, which stays.
+   */
+  #onGatewayBack(session) {
+    if (session !== this.#session) return;
+    const before = this.#statusBeforeReconnect;
+    this.#statusBeforeReconnect = null;
+    if (before && this.#status.state === BRIDGE_STATE.RECONNECTING) {
+      this.#setState(before.state, { channelName: before.channelName });
+    }
+    this.#onDiscordChange();
+  }
+
+  /** discord.js gave up the gateway connection, so the session is dead. Connect starts a new one. */
+  async #onGatewayLost(session, code) {
+    if (session !== this.#session) return;
+    this.#statusBeforeReconnect = null;
+    await this.#closeSession();
+    this.#setState(STATE_FOR_LOGIN_ERROR[code]);
+  }
+
+  /**
+   * Forget the session before it closes: discord.js emits events while it closes (a normal close of the gateway
+   * emits shardReconnecting), and the handlers ignore a session that is not the current one.
+   */
   async #closeSession() {
-    this.#leaveVoice();
-    await this.#session?.close();
+    const session = this.#session;
     this.#session = null;
+    this.#leaveVoice();
+    await session?.close();
     this.#deps.broadcast(this.#voiceMembersMessage());
   }
 

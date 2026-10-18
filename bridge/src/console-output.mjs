@@ -12,6 +12,7 @@ const STATUS_TEXT = {
   [BRIDGE_STATE.MISSING_PERMISSION]: (status) => `The bot cannot join #${status.channelName}. Give it the Connect permission.`,
   [BRIDGE_STATE.JOINING]: (status) => `Joining #${status.channelName}…`,
   [BRIDGE_STATE.LISTENING]: (status) => `Listening in #${status.channelName}.`,
+  [BRIDGE_STATE.RECONNECTING]: () => "The connection to Discord dropped. Reconnecting…",
 };
 
 /** The console window of the bridge. The user only reads it; all setup happens in Foundry. */

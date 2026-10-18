@@ -14,6 +14,17 @@ export class LoginError extends Error {
 // is not necessary.
 const INTENTS = [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates];
 
+// The channel and role events come with the Guilds intent; a channel update carries the permission overwrites, which
+// is the fix that the guide gives. A member update needs the privileged GuildMembers intent, which the bot does not
+// ask for; if Discord sends none, a new role of the bot counts at the next channel, role, or voice event.
+const CHANGE_EVENTS = [
+  Events.VoiceStateUpdate, Events.GuildCreate, Events.GuildDelete, Events.ChannelUpdate, Events.GuildRoleCreate,
+  Events.GuildRoleUpdate, Events.GuildRoleDelete, Events.GuildMemberUpdate,
+];
+
+/** The gateway close code for a token that Discord no longer accepts (GatewayCloseCodes.AuthenticationFailed). */
+const AUTHENTICATION_FAILED = 4004;
+
 /** One logged-in Discord bot. It translates discord.js objects into the plain data of protocol.mjs. */
 export class DiscordSession {
   #client;
@@ -77,11 +88,27 @@ export class DiscordSession {
     return this.#client.guilds.cache.get(guildId).voiceAdapterCreator;
   }
 
-  /** @param {() => void} listener  Called when someone changes voice channel, or the bot joins or leaves a server. */
+  /**
+   * @param {() => void} listener  Called when someone changes voice channel, the bot joins or leaves a server, or a
+   *   permission can change: a channel update (permission overwrites), a role change, or a change of the bot's roles.
+   */
   onChange(listener) {
-    for (const event of [Events.VoiceStateUpdate, Events.GuildCreate, Events.GuildDelete]) {
-      this.#client.on(event, () => listener());
-    }
+    for (const event of CHANGE_EVENTS) this.#client.on(event, () => listener());
+  }
+
+  /**
+   * The gateway connection to Discord. discord.js reconnects by itself; onLost means it gave up
+   * (WebSocketManager: an unrecoverable close code).
+   * @param {{onReconnecting: () => void, onBack: () => void, onLost: (code: string) => void}} listener
+   *   code is a value of TOKEN_ERROR.
+   */
+  onGatewayChange({ onReconnecting, onBack, onLost }) {
+    this.#client.on(Events.ShardReconnecting, () => onReconnecting());
+    this.#client.on(Events.ShardResume, () => onBack());
+    this.#client.on(Events.ShardReady, () => onBack());
+    this.#client.on(Events.ShardDisconnect, (event) => onLost(
+      event.code === AUTHENTICATION_FAILED ? TOKEN_ERROR.REJECTED : TOKEN_ERROR.DISCORD_UNREACHABLE,
+    ));
   }
 
   async close() {
