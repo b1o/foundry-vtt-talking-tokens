@@ -1,6 +1,6 @@
 {
   "name": "talking-tokens-bridge",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Reports who speaks in the Discord voice channel of the GM to the Talking Tokens Foundry module.",
   "private": true,
   "type": "module",
